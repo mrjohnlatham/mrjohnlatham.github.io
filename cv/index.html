@@ -447,14 +447,20 @@
     position: relative;
     aspect-ratio: 16 / 9;
     perspective: 900px;
+    -webkit-perspective: 900px;
   }
   .flipper {
     position: absolute;
     inset: 0;
     transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d;
     transition: transform .6s cubic-bezier(.45, .05, .25, 1);
+    will-change: transform;
   }
-  .item.open .flipper { transform: rotateY(-180deg); }     /* opening: right edge swings over to the left, like turning a page; closing goes back left to right */
+  .item.open .flipper { 
+    transform: rotateY(-180deg);
+    -webkit-transform: rotateY(-180deg);
+  }     /* opening: right edge swings over to the left, like turning a page; closing goes back left to right */
 
   .face {
     position: absolute;
@@ -463,12 +469,17 @@
     background: var(--box);
     -webkit-backface-visibility: hidden;
             backface-visibility: hidden;
+    -webkit-transform: translateZ(0);
+            transform: translateZ(0);
   }
   /* The other side: same picture, a dark see-through block, white text */
   .face.back {
     transform: rotateY(180deg);
+    -webkit-transform: rotateY(180deg);
     display: flex;
-    align-items: flex-start;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
     padding: 12px 12px 38px;
     background-position: center;
     background-size: cover;
@@ -491,6 +502,8 @@
     font-size: 11.5px;
     line-height: 1.45;
     color: #fff;
+    margin: 0 0 12px 0;
+    flex-grow: 0;
   }
 
 
