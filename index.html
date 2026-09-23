@@ -128,8 +128,9 @@
   }
   .g-frame.active{ opacity:1; }
   @media (max-width:780px){
-    .g-frame-wrap{ width:calc(100vw - 56px); height:min(58vh, 640px); }
-    .g-arrow{ font-size:19px; padding:4px 8px; opacity:.4; }
+    .g-stage{ gap:8px; }
+    .g-frame-wrap{ width:100%; height:min(58vh, 640px); max-width:calc(100vw - 96px); }
+    .g-arrow{ font-size:19px; padding:8px; opacity:.4; flex-shrink:0; }
   }
   .g-title{ margin-top:20px; font-size:15px; letter-spacing:.03em; color:var(--fg); text-align:center; font-weight:400; }
   .g-meta{ margin-top:8px; font-size:11px; letter-spacing:.1em; color:var(--muted); text-align:center; }
