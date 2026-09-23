@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>John Latham — Photography</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#ffffff;
+    --fg:#0a0a0a;
+    --muted:#8a8a8a;
+    --ph1:#d6d6d6;
+    --nav-h:78px;
+    --dur:520ms;
+    --ease:cubic-bezier(.16,.84,.32,1);
+    box-sizing:border-box;
+  }
+  *{box-sizing:inherit; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    background:var(--bg);
+    color:var(--fg);
+    font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-weight:300;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  @media (prefers-reduced-motion: reduce){ *{ animation-duration:.001ms !important; transition-duration:.001ms !important; } }
+  a{color:inherit; text-decoration:none;}
+  button{font-family:inherit; background:none; border:none; color:inherit; cursor:pointer;}
+  ::selection{background:#0a0a0a; color:#fff;}
+  ul{list-style:none;}
+
+  /* transparent nav, floats directly over the hero image so it reaches full screen */
+  .topbar{
+    position:fixed; top:0; left:0; right:0; z-index:70;
+    height: var(--nav-h);
+    padding-top: env(safe-area-inset-top, 0px);
+    display:flex; align-items:center; justify-content:space-between;
+    padding-left:clamp(20px,4vw,44px); padding-right:clamp(20px,4vw,44px);
+    background:transparent;
+  }
+  .brand{ font-size:22px; letter-spacing:.04em; font-weight:700; color:#fff; cursor:pointer; transition:color 300ms ease; }
+
+  .nav-links{ display:flex; gap:22px; }
+  .nav-links a{ font-size:12px; letter-spacing:.06em; text-transform:uppercase; font-weight:700; color:#fff; position:relative; padding:4px 0; white-space:nowrap; transition:color 300ms ease; }
+  .nav-links a::after{
+    content:''; position:absolute; left:0; right:0; bottom:-2px; height:1px; background:#fff;
+    transform:scaleX(0); transform-origin:left; transition:transform 340ms var(--ease), background 300ms ease;
+  }
+  .nav-links a:hover::after, .nav-links a.active::after{ transform:scaleX(1); }
+
+  /* on the gallery page the nav switches to plain black */
+  body.nav-black .brand,
+  body.nav-black .nav-links a{ color:#0a0a0a; }
+  body.nav-black .nav-links a::after{ background:#0a0a0a; }
+  body.nav-black .burger span{ background:#0a0a0a; }
+
+  .burger{ display:none; width:24px; height:16px; position:relative; }
+  .burger span{ position:absolute; left:0; right:0; height:1px; background:#fff; transition:transform var(--dur) var(--ease), opacity var(--dur) var(--ease), background 300ms ease; }
+  .burger span:nth-child(1){ top:0; }
+  .burger span:nth-child(2){ top:7px; }
+  .burger span:nth-child(3){ top:14px; }
+  .burger.open span:nth-child(1){ transform:translateY(7px) rotate(45deg); }
+  .burger.open span:nth-child(2){ opacity:0; }
+  .burger.open span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
+
+  @media (max-width:780px){
+    .nav-links{ display:none; }
+    .burger{ display:block; }
+  }
+
+  .mobile-overlay{
+    position:fixed; inset:0; z-index:60;
+    background:#fff;
+    display:flex; align-items:center; justify-content:center;
+    opacity:0; visibility:hidden; pointer-events:none;
+    transition:opacity 420ms var(--ease);
+  }
+  .mobile-overlay.open{ opacity:1; visibility:visible; pointer-events:auto; }
+  .mobile-overlay ul{ text-align:center; }
+  .mobile-overlay li{ overflow:hidden; }
+  .mobile-overlay a{
+    display:inline-block; font-size:clamp(22px,6.5vw,34px); font-weight:700; padding:11px 0;
+    text-transform:uppercase; letter-spacing:.04em;
+    color:#0a0a0a; transform:translateY(110%);
+  }
+  .mobile-overlay.open a{ animation:rise 560ms var(--ease) forwards; }
+  @keyframes rise{ to{ transform:translateY(0);} }
+
+  #view{ opacity:1; transition:opacity 420ms var(--ease); }
+  #view.fading{ opacity:0; }
+
+  #home{ position:relative; height:100svh; height:100dvh; width:100%; overflow:hidden; background:#111; }
+  .hero-slide{
+    position:absolute; inset:0;
+    opacity:0; transition:opacity 1100ms ease;
+    background-size:cover; background-position:center;
+    transform-origin:center;
+  }
+  .hero-slide.active{ opacity:1; }
+  @keyframes kenburns{ from{ transform:scale(1); } to{ transform:scale(1.06); } }
+  .hero-scrim{ position:absolute; left:0; right:0; z-index:2; pointer-events:none; }
+  .hero-scrim.top{ top:0; height:190px; background:linear-gradient(to bottom, rgba(0,0,0,.5), rgba(0,0,0,0)); }
+  .hero-scrim.bottom{ bottom:0; height:190px; background:linear-gradient(to top, rgba(0,0,0,.5), rgba(0,0,0,0)); }
+  .hero-footer{
+    position:absolute; left:0; right:0;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
+    text-align:center;
+    font-size:10px; letter-spacing:.08em; font-weight:500;
+    color:#fff; z-index:5;
+  }
+
+  #gallery{ min-height:100svh; min-height:100dvh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding: calc(var(--nav-h) + 12px) 24px 12px; }
+  .g-stage{ display:grid; grid-template-columns: 1fr auto 1fr; align-items:center; width:100%; }
+  .g-arrow{ font-size:30px; font-weight:200; color:var(--fg); opacity:.35; transition:opacity 240ms ease; padding:14px; justify-self:center; }
+  .g-arrow:hover{ opacity:1; }
+  .g-frame-wrap{ position:relative; height:min(74vh, 800px); width:min(86vw, 1040px); cursor:pointer; }
+  .g-frame{
+    position:absolute; inset:0;
+    background-color:var(--ph1);
+    background-size:contain; background-position:center; background-repeat:no-repeat;
+    opacity:0;
+    transition:opacity 650ms ease;
+  }
+  .g-frame.active{ opacity:1; }
+  @media (max-width:780px){
+    .g-frame-wrap{ width:calc(100vw - 56px); height:min(58vh, 640px); }
+    .g-arrow{ font-size:19px; padding:4px 8px; opacity:.4; }
+  }
+  .g-title{ margin-top:20px; font-size:15px; letter-spacing:.03em; color:var(--fg); text-align:center; font-weight:400; }
+  .g-meta{ margin-top:8px; font-size:11px; letter-spacing:.1em; color:var(--muted); text-align:center; }
+
+  #contact{ min-height:100svh; min-height:100dvh; display:flex; align-items:center; justify-content:center; padding: calc(var(--nav-h) + 30px) 24px 60px; text-align:center; }
+  #contact .inner{ max-width:520px; }
+  #contact a.email{ display:inline-block; font-size:clamp(22px,4vw,32px); font-weight:400; padding:18px 0; width:100%; }
+
+  [hidden]{ display:none !important; }
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="brand" onclick="goHome()">JOHN LATHAM</div>
+  <ul class="nav-links" id="navLinksDesktop"></ul>
+  <button class="burger" id="burger" onclick="toggleMobile()"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="mobile-overlay" id="mobileOverlay">
+  <ul id="navLinksMobile"></ul>
+</div>
+
+<main id="view">
+  <section id="home">
+    <div class="hero-slide active" data-slide="0"></div>
+    <div class="hero-slide" data-slide="1"></div>
+    <div class="hero-scrim top"></div>
+    <div class="hero-scrim bottom"></div>
+    <div class="hero-footer">Photography &copy; John Latham</div>
+  </section>
+
+  <section id="gallery" hidden>
+    <div class="g-stage">
+      <button class="g-arrow" onclick="step(-1)">&#8249;</button>
+      <div class="g-frame-wrap" id="gFrameWrap">
+        <div class="g-frame" data-layer="0"></div>
+        <div class="g-frame" data-layer="1"></div>
+      </div>
+      <button class="g-arrow" onclick="step(1)">&#8250;</button>
+    </div>
+    <div class="g-title" id="gTitle"></div>
+    <div class="g-meta" id="gMeta"></div>
+  </section>
+
+  <section id="contact" hidden>
+    <div class="inner">
+      <a class="email" href="mailto:hellojohnlatham@gmail.com">hellojohnlatham@gmail.com</a>
+    </div>
+  </section>
+</main>
+
+<script>
+/* random shuffle (Fisher-Yates) so the home page slideshow order changes each visit,
+   and automatically includes every image from every gallery as new ones are added */
+function shuffle(arr){
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+const categories = [
+  { slug:"music", label:"Music", items:[{title:"Cabbage",id:"LIVE-17",img:"images/LIVE-17.jpeg",land:true,home:true},{title:"The Vryll Society",id:"LIVE-22",img:"images/LIVE-22.jpeg",land:true,home:true},{title:"Night Beats",id:"LIVE-33",img:"images/LIVE-33.jpeg",land:false,home:false},{title:"Liverpool Sound Station",id:"LIVE-37",img:"images/LIVE-37.jpeg",land:true,home:true},{title:"Night Beats",id:"LIVE-38",img:"images/LIVE-38.jpeg",land:true,home:true},{title:"Calvin Love",id:"LIVE-46",img:"images/LIVE-46.jpeg",land:false,home:false},{title:"Night Beats",id:"LIVE-47",img:"images/LIVE-47.jpeg",land:true,home:false},{title:"Cabbage",id:"LIVE-54",img:"images/LIVE-54.jpeg",land:true,home:true},{title:"The Amazons",id:"LIVE-58",img:"images/LIVE-58.jpeg",land:true,home:false},{title:"Little Triggers",id:"LIVE-60",img:"images/LIVE-60.jpeg",land:true,home:false},{title:"Psycho Comedy",id:"LIVE-62",img:"images/LIVE-62.jpeg",land:true,home:true},{title:"Silent-K",id:"LIVE-67",img:"images/LIVE-67.jpeg",land:true,home:true},{title:"Night Beats",id:"LIVE-71",img:"images/LIVE-71.jpeg",land:true,home:false},{title:"The Kooks",id:"LIVE-73",img:"images/LIVE-73.jpeg",land:true,home:true},{title:"The Two Tens",id:"LIVE-74",img:"images/LIVE-74.jpeg",land:true,home:false},{title:"Edgar Jones",id:"LIVE-77",img:"images/LIVE-77.jpeg",land:true,home:false},{title:"Silent-K",id:"LIVE-83",img:"images/LIVE-83.jpeg",land:true,home:false},{title:"Liverpool Sound City",id:"LIVE-88",img:"images/LIVE-88.jpeg",land:true,home:true},{title:"The Kills",id:"LIVE-89",img:"images/LIVE-89.jpeg",land:true,home:false},{title:"Silent-K",id:"LIVE-94",img:"images/LIVE-94.jpeg",land:true,home:true},{title:"The Cribs",id:"LIVE-102",img:"images/LIVE-102.jpeg",land:true,home:true},{title:"The Kooks",id:"LIVE-103",img:"images/LIVE-103.jpeg",land:true,home:true},{title:"Dave McCabe",id:"LIVE-109",img:"images/LIVE-109.jpeg",land:true,home:false},{title:"Slaves",id:"LIVE-118",img:"images/LIVE-118.jpeg",land:true,home:true},{title:"Cabbage",id:"LIVE-120",img:"images/LIVE-120.jpeg",land:true,home:true},{title:"Silent-K",id:"LIVE-121",img:"images/LIVE-121.jpeg",land:true,home:false},{title:"The Vim Dicta",id:"PROMO-7",img:"images/PROMO-7.jpeg",land:true,home:true},{title:"Dylan Cassin",id:"PROMO-24",img:"images/PROMO-24.jpeg",land:true,home:true},{title:"Dylan Cassin",id:"PROMO-26",img:"images/PROMO-26.jpeg",land:true,home:true},{title:"Dylan Cassin",id:"PROMO-30",img:"images/PROMO-30.jpeg",land:true,home:true},{title:"Little Triggers",id:"PROMO-31",img:"images/PROMO-31.jpeg",land:true,home:false},{title:"The Vryll Society",id:"PROMO-32",img:"images/PROMO-32.jpeg",land:true,home:false},{title:"Warbly Jets",id:"PROMO-38",img:"images/PROMO-38.jpeg",land:true,home:true},{title:"The Vim Dicta",id:"PROMO-50",img:"images/PROMO-50.jpeg",land:true,home:true},{title:"Dylan Cassin",id:"PROMO-57",img:"images/PROMO-57.jpeg",land:true,home:true},{title:"Pizza Girl",id:"PROMO-62",img:"images/PROMO-62.jpeg",land:true,home:true},{title:"Little Triggers",id:"PROMO-67",img:"images/PROMO-67.jpeg",land:true,home:false},{title:"Psycho Comedy",id:"PROMO-74",img:"images/PROMO-74.jpeg",land:true,home:false},{title:"Psycho Comedy",id:"PROMO-75",img:"images/PROMO-75.jpeg",land:true,home:true},{title:"Little Triggers",id:"PROMO-82",img:"images/PROMO-82.jpeg",land:true,home:true},{title:"Little Triggers",id:"PROMO-91",img:"images/PROMO-91.jpeg",land:true,home:false},{title:"The Vim Dicta",id:"PROMO-95",img:"images/PROMO-95.jpeg",land:true,home:true},{title:"Warbly Jets",id:"PROMO-101",img:"images/PROMO-101.jpeg",land:true,home:true},{title:"Pizza Girl",id:"PROMO-106",img:"images/PROMO-106.jpeg",land:true,home:true},{title:"Warbly Jets",id:"PROMO-111",img:"images/PROMO-111.jpeg",land:true,home:true},{title:"Pizza Girl",id:"PROMO-114",img:"images/PROMO-114.jpeg",land:true,home:true},{title:"Jo Mary",id:"PROMO-116",img:"images/PROMO-116.jpeg",land:true,home:false},{title:"Little Triggers",id:"PROMO-124",img:"images/PROMO-124.jpeg",land:true,home:false},{title:"The Vim Dicta",id:"PROMO-130",img:"images/PROMO-130.jpeg",land:true,home:true},{title:"Dylan Cassin",id:"PROMO-132",img:"images/PROMO-132.jpeg",land:true,home:true},{title:"Calvin Love",id:"PROMO-136",img:"images/PROMO-136.jpeg",land:true,home:false},{title:"Pizza Girl",id:"PROMO-144",img:"images/PROMO-144.jpeg",land:true,home:true},{title:"The Vim Dicta",id:"PROMO-152",img:"images/PROMO-152.jpeg",land:true,home:true},{title:"Jo Mary",id:"STUDIO-3",img:"images/STUDIO-3.jpeg",land:true,home:false},{title:"Little Triggers",id:"STUDIO-6",img:"images/STUDIO-6.jpeg",land:true,home:false},{title:"Warbly Jets",id:"STUDIO-8",img:"images/STUDIO-8.jpeg",land:true,home:true},{title:"Little Triggers",id:"STUDIO-20",img:"images/STUDIO-20.jpeg",land:true,home:true},{title:"Motor Museum, Liverpool",id:"STUDIO-21",img:"images/STUDIO-21.jpeg",land:true,home:true},{title:"Motor Museum, Liverpool",id:"STUDIO-23",img:"images/STUDIO-23.jpeg",land:true,home:true},{title:"Warbly Jets",id:"STUDIO-29",img:"images/STUDIO-29.jpeg",land:true,home:true},{title:"Warbly Jets",id:"STUDIO-32",img:"images/STUDIO-32.jpeg",land:true,home:false},{title:"Little Triggers",id:"STUDIO-34",img:"images/STUDIO-34.jpeg",land:true,home:false},{title:"Warbly Jets",id:"STUDIO-43",img:"images/STUDIO-43.jpeg",land:false,home:false},{title:"Warbly Jets",id:"STUDIO-52",img:"images/STUDIO-52.jpeg",land:true,home:true},{title:"Warbly Jets",id:"STUDIO-72",img:"images/STUDIO-72.jpeg",land:true,home:false},{title:"Jo Mary",id:"STUDIO-73",img:"images/STUDIO-73.jpeg",land:true,home:false}] },
+  { slug:"weddings", label:"Weddings", items:[{title:"",id:"CheshireWeddingPhotography-35",img:"images/CheshireWeddingPhotography-35.jpeg",land:true,home:true},{title:"",id:"ItalyWeddingPhotography-4",img:"images/ItalyWeddingPhotography-4.jpeg",land:true,home:true},{title:"",id:"ItalyWeddingPhotography-18",img:"images/ItalyWeddingPhotography-18.jpeg",land:true,home:false},{title:"",id:"ItalyWeddingPhotography-21",img:"images/ItalyWeddingPhotography-21.jpeg",land:true,home:true},{title:"",id:"ItalyWeddingPhotography-28",img:"images/ItalyWeddingPhotography-28.jpeg",land:true,home:false},{title:"",id:"ItalyWeddingPhotography-29",img:"images/ItalyWeddingPhotography-29.jpeg",land:true,home:false},{title:"",id:"ItalyWeddingPhotography-31",img:"images/ItalyWeddingPhotography-31.jpeg",land:true,home:false},{title:"",id:"JohnLathamWeddings-54",img:"images/JohnLathamWeddings-54.jpeg",land:true,home:false},{title:"",id:"JohnLathamWeddings-56",img:"images/JohnLathamWeddings-56.jpeg",land:true,home:false},{title:"",id:"JohnLathamWeddings-58",img:"images/JohnLathamWeddings-58.jpeg",land:true,home:false},{title:"",id:"JohnLathamWeddings-63",img:"images/JohnLathamWeddings-63.jpeg",land:true,home:true},{title:"",id:"JohnLathamWeddings-96",img:"images/JohnLathamWeddings-96.jpeg",land:false,home:false},{title:"",id:"JohnLathamWeddings-103",img:"images/JohnLathamWeddings-103.jpeg",land:true,home:false},{title:"",id:"JohnLathamWeddings-134",img:"images/JohnLathamWeddings-134.jpeg",land:true,home:true},{title:"",id:"JohnLathamWeddings-150",img:"images/JohnLathamWeddings-150.jpeg",land:true,home:false},{title:"",id:"JohnLathamWeddings-156",img:"images/JohnLathamWeddings-156.jpeg",land:true,home:true},{title:"",id:"JohnLathamWeddings-176",img:"images/JohnLathamWeddings-176.jpeg",land:true,home:false},{title:"",id:"LiverpoolTownHallWedding-28",img:"images/LiverpoolTownHallWedding-28.jpeg",land:true,home:false},{title:"",id:"PrestburyWeddingPhotography-6",img:"images/PrestburyWeddingPhotography-6.jpeg",land:true,home:true},{title:"",id:"PrestburyWeddingPhotography-69",img:"images/PrestburyWeddingPhotography-69.jpeg",land:true,home:true},{title:"",id:"PrestburyWeddingPhotography-84",img:"images/PrestburyWeddingPhotography-84.jpeg",land:true,home:true},{title:"",id:"PrestburyWeddingPhotography-118",img:"images/PrestburyWeddingPhotography-118.jpeg",land:true,home:true},{title:"",id:"SussexWedding-56",img:"images/SussexWedding-56.jpeg",land:true,home:true}] },
+  { slug:"portraits", label:"Portraits", items:[{title:"Anthony Yarde",id:"JOHNLATHAM-ANTHONYYARDE-3",img:"images/JOHNLATHAM-ANTHONYYARDE-3.jpeg",land:true,home:true},{title:"Cheryl Latham",id:"JOHNLATHAM-BRIGHTERWORLD-2",img:"images/JOHNLATHAM-BRIGHTERWORLD-2.jpeg",land:true,home:true},{title:"Charlie Edwards",id:"JOHNLATHAM-CHARLIEEDWARDS-5",img:"images/JOHNLATHAM-CHARLIEEDWARDS-5.jpeg",land:true,home:true},{title:"David Helmets",id:"JOHNLATHAM-DAVIDA-1",img:"images/JOHNLATHAM-DAVIDA-1.jpeg",land:true,home:true},{title:"Dillian Whyte",id:"JOHNLATHAM-DILLIANWHYTE-3",img:"images/JOHNLATHAM-DILLIANWHYTE-3.jpeg",land:true,home:true},{title:"Chloe & Jim, Newgate Clocks",id:"JOHNLATHAM-NEWGATEPORTRAITS-1",img:"images/JOHNLATHAM-NEWGATEPORTRAITS-1.jpeg",land:true,home:true},{title:"Chloe, Newgate Clocks",id:"JOHNLATHAM-NEWGATEPORTRAITS-5",img:"images/JOHNLATHAM-NEWGATEPORTRAITS-5.jpeg",land:false,home:false},{title:"Chloe, Newgate Clocks",id:"JOHNLATHAM-NEWGATEPORTRAITS-7",img:"images/JOHNLATHAM-NEWGATEPORTRAITS-7.jpeg",land:true,home:true},{title:"SABBC, Sheffield",id:"JOHNLATHAM-SABBC-1",img:"images/JOHNLATHAM-SABBC-1.jpeg",land:true,home:false},{title:"SABBC, Sheffield",id:"JOHNLATHAM-SABBC-2",img:"images/JOHNLATHAM-SABBC-2.jpeg",land:true,home:true},{title:"SABBC, Sheffield",id:"JOHNLATHAM-SABBC-3",img:"images/JOHNLATHAM-SABBC-3.jpeg",land:true,home:true},{title:"Dean Oliver, Symbiosis",id:"JOHNLATHAM-SACRED-1",img:"images/JOHNLATHAM-SACRED-1.jpeg",land:true,home:true},{title:"Terry Flanagan",id:"JOHNLATHAM-TERRYFLANNAGAN-3",img:"images/JOHNLATHAM-TERRYFLANNAGAN-3.jpeg",land:true,home:true}] }
+];
+
+/* home hero: only the curated home-selection images, shuffled within
+   each category, then interleaved round-robin so the slideshow bounces
+   category to category (music, weddings, portraits, music, weddings, ...).
+   Each slide keeps a reference back to its category + item so a click can
+   jump straight into that gallery at that image. */
+function buildHeroImages(){
+  const perCategory = categories.map(c =>
+    shuffle(c.items.filter(it => it.img && it.home)).map(it => ({ img: it.img, slug: c.slug, id: it.id }))
+  );
+  const out = [];
+  let i = 0;
+  let remaining = perCategory.reduce((n, arr) => n + arr.length, 0);
+  while (remaining > 0){
+    for (const arr of perCategory){
+      if (i < arr.length){
+        out.push(arr[i]);
+        remaining--;
+      }
+    }
+    i++;
+  }
+  return out;
+}
+
+const heroImages = buildHeroImages();
+
+/* build nav: gallery categories, then Contact */
+const navD = document.getElementById('navLinksDesktop');
+const navM = document.getElementById('navLinksMobile');
+
+function addNavItem(label, onClick, slug, delayIndex){
+  const li1=document.createElement('li'); const a1=document.createElement('a');
+  a1.textContent=label; a1.href='javascript:void(0)'; if(slug) a1.dataset.slug=slug;
+  a1.onclick=onClick; li1.appendChild(a1); navD.appendChild(li1);
+
+  const li2=document.createElement('li'); const a2=document.createElement('a');
+  a2.textContent=label; a2.href='javascript:void(0)';
+  a2.style.transitionDelay=(delayIndex*40)+'ms'; a2.style.animationDelay=(delayIndex*40)+'ms';
+  a2.onclick=onClick; li2.appendChild(a2); navM.appendChild(li2);
+}
+
+categories.forEach((c,i)=> addNavItem(c.label, ()=>openGallery(c.slug), c.slug, i));
+addNavItem('Contact', ()=>openContact(), 'contact', categories.length);
+
+/* mobile menu */
+const burger = document.getElementById('burger');
+const mobileOverlay = document.getElementById('mobileOverlay');
+let mobileOpen=false;
+function toggleMobile(force){
+  mobileOpen = force!==undefined ? force : !mobileOpen;
+  burger.classList.toggle('open', mobileOpen);
+  mobileOverlay.classList.toggle('open', mobileOpen);
+}
+
+/* hero crossfade across all supplied images, 3s per slide */
+const homeSection = document.getElementById('home');
+const slideA = homeSection.querySelector('[data-slide="0"]');
+const slideB = homeSection.querySelector('[data-slide="1"]');
+let heroIdx = 0;
+let showingA = true;
+function setSlide(el, idx){
+  el.style.backgroundImage = `url("${heroImages[idx].img}")`;
+  el.style.animation = 'none';
+  void el.offsetWidth; /* force reflow so the restarted animation begins from scale(1) */
+  el.style.animation = 'kenburns 5600ms linear forwards';
+}
+setSlide(slideA, 0);
+slideA.classList.add('active');
+if (heroImages.length > 1) setSlide(slideB, 1);
+
+const HERO_INTERVAL_MS = 4200;
+let heroTimer = null;
+
+function advanceHero(){
+  if (heroImages.length < 2) return;
+  heroIdx = (heroIdx + 1) % heroImages.length;
+  const nextEl = showingA ? slideB : slideA;
+  const curEl  = showingA ? slideA : slideB;
+  setSlide(nextEl, heroIdx);
+  nextEl.classList.add('active');
+  curEl.classList.remove('active');
+  showingA = !showingA;
+}
+
+function startHeroTimer(){
+  if (heroTimer) clearInterval(heroTimer);
+  heroTimer = setInterval(advanceHero, HERO_INTERVAL_MS);
+}
+startHeroTimer();
+
+/* tapping/clicking anywhere on the hero jumps into that image's own gallery,
+   starting right at that image, rather than just advancing the slideshow */
+homeSection.addEventListener('click', ()=>{
+  const current = heroImages[heroIdx];
+  if (current) openGallery(current.slug, current.id);
+});
+
+/* view switching */
+const view = document.getElementById('view');
+const gallerySection = document.getElementById('gallery');
+const contactSection = document.getElementById('contact');
+const gFrameWrap = document.getElementById('gFrameWrap');
+const gLayers = gFrameWrap.querySelectorAll('.g-frame');
+const gTitle = document.getElementById('gTitle');
+const gMeta = document.getElementById('gMeta');
+
+let activeCat=null, activeIdx=0, showingLayer0=true;
+
+function hideAll(){
+  homeSection.hidden = true;
+  gallerySection.hidden = true;
+  contactSection.hidden = true;
+}
+
+function openGallery(slug, startId){
+  toggleMobile(false);
+  view.classList.add('fading');
+  setTimeout(()=>{
+    const found = categories.find(c=>c.slug===slug);
+    activeCat = { ...found, items: shuffle(found.items) }; /* re-shuffled fresh every time this gallery is opened */
+    activeIdx = startId ? Math.max(0, activeCat.items.findIndex(it=>it.id===startId)) : 0;
+    hideAll();
+    gallerySection.hidden = false;
+    document.body.classList.add('nav-black');
+    document.querySelectorAll('.nav-links a').forEach(a=>a.classList.toggle('active', a.dataset.slug===slug));
+    renderInitial();
+    view.classList.remove('fading');
+  }, 380);
+}
+
+function openContact(){
+  toggleMobile(false);
+  view.classList.add('fading');
+  setTimeout(()=>{
+    hideAll();
+    contactSection.hidden = false;
+    document.body.classList.add('nav-black');
+    document.querySelectorAll('.nav-links a').forEach(a=>a.classList.toggle('active', a.dataset.slug==='contact'));
+    view.classList.remove('fading');
+  }, 380);
+}
+
+function goHome(){
+  toggleMobile(false);
+  if (!gallerySection.hidden || !contactSection.hidden){
+    view.classList.add('fading');
+    setTimeout(()=>{
+      hideAll();
+      homeSection.hidden = false;
+      document.body.classList.remove('nav-black');
+      document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('active'));
+      view.classList.remove('fading');
+    }, 380);
+  }
+}
+
+function updateMeta(item){
+  gTitle.textContent = item.title;
+  gMeta.textContent = `${String(activeIdx+1).padStart(2,'0')} / ${String(activeCat.items.length).padStart(2,'0')}`;
+}
+
+/* first image of a newly opened category appears straight away, no fade needed */
+function renderInitial(){
+  const item = activeCat.items[activeIdx];
+  gLayers[0].style.backgroundImage = item.img ? `url('${item.img}')` : '';
+  gLayers[0].style.backgroundColor = item.img ? '#fff' : '';
+  gLayers[0].classList.add('active');
+  gLayers[1].classList.remove('active');
+  showingLayer0 = true;
+  updateMeta(item);
+}
+
+/* subsequent images crossfade between the two stacked layers, same as the home hero */
+function step(d){
+  if (!activeCat) return;
+  let newIdx = activeIdx + d;
+  /* completed a full lap through this gallery: reshuffle before starting the next one */
+  if (newIdx >= activeCat.items.length){
+    activeCat.items = shuffle(activeCat.items);
+    newIdx = 0;
+  } else if (newIdx < 0){
+    activeCat.items = shuffle(activeCat.items);
+    newIdx = activeCat.items.length - 1;
+  }
+  activeIdx = newIdx;
+  const item = activeCat.items[activeIdx];
+  const nextLayer = showingLayer0 ? gLayers[1] : gLayers[0];
+  const curLayer  = showingLayer0 ? gLayers[0] : gLayers[1];
+  nextLayer.style.backgroundImage = item.img ? `url('${item.img}')` : '';
+  nextLayer.style.backgroundColor = item.img ? '#fff' : '';
+  nextLayer.classList.add('active');
+  curLayer.classList.remove('active');
+  showingLayer0 = !showingLayer0;
+  updateMeta(item);
+}
+
+/* left half of the image = previous, right half = next */
+gFrameWrap.addEventListener('click', (e)=>{
+  e.stopPropagation();
+  const rect = gFrameWrap.getBoundingClientRect();
+  const clickedLeftHalf = (e.clientX - rect.left) < rect.width / 2;
+  step(clickedLeftHalf ? -1 : 1);
+});
+
+document.addEventListener('keydown',(e)=>{
+  if (!gallerySection.hidden){
+    if (e.key==='Escape') goHome();
+    if (e.key==='ArrowRight') step(1);
+    if (e.key==='ArrowLeft') step(-1);
+  } else if (!contactSection.hidden){
+    if (e.key==='Escape') goHome();
+  } else if (e.key==='Escape' && mobileOpen) toggleMobile(false);
+});
+</script>
+</body>
+</html>
