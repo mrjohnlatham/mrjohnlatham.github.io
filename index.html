@@ -991,10 +991,10 @@
   const list     = document.getElementById('items');
   const reduce   = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  const SPREAD = 1.5;
+  const SPREAD = 1.35;
   const SCROLL_SPEED = 20;
   const TIGHTEN = 20;
-  const START = 330, MIN_SAME_SIDE = 380, END_GAP = 330;
+  const START = 330, MIN_SAME_SIDE = 360, END_GAP = 330;
   const GAPS  = [84, 40, 34, 88, 66, 56, 90, 26, 44, 78, 82, 70];
   const last  = { above: -Infinity, below: -Infinity };
   let x = START;
