@@ -765,6 +765,14 @@
   .shot.zoomy img.slide.on, .shot.zoomy img.slide.under { animation: slide-zoom 3.6s ease-out both; }
   @keyframes slide-zoom { from { transform: scale(1); } to { transform: scale(1.09); } }
 
+
+  /* Modal: the left / right arrows sit in the same row as the year line, so the gap under the picture is the same with or without a gallery */
+  .g-nav { height: 0; padding: 0 22px; position: relative; z-index: 2; align-items: flex-start; }
+  .g-nav .g-arrow { margin-top: 5px; }
+  .panel-body { padding-top: 22px; }
+  @media (max-width: 640px) { .g-nav { padding: 0 14px; } }
+  .panel-caption { height: 0; padding: 0 12px; position: relative; z-index: 1; line-height: 1; transform: translateY(-22px); color: rgba(255,255,255,.85); text-shadow: 0 0 4px #000, 0 0 8px rgba(0,0,0,.8); pointer-events: none; }   /* caption sits on the picture's bottom-right corner, so it adds no gap */
+
   @media (prefers-reduced-motion: reduce) {
     .crt-noise { display: none; }
     *, *::before, *::after { animation: none !important; transition: none !important; }
@@ -817,7 +825,7 @@
     -->
     <section class="beat current">
       <p class="year today-date" id="todayDate"></p>
-      <p class="avail"><span class="avail-lbl">Currently:</span> <span class="avail-on"><i class="avail-dot" aria-hidden="true"></i>Available</span></p>
+      <p class="avail"><span class="avail-lbl">Currently:</span> <span class="avail-on">Available<i class="avail-dot" aria-hidden="true"></i></span></p>
       <div class="rot" id="rot"><span class="w in" id="rotA" aria-hidden="true"></span><span class="w" id="rotB" aria-hidden="true"></span><span class="sr-only" id="rotAll"></span></div>
       <p class="links">
         <a href="mailto:hellojohnlatham@gmail.com">hellojohnlatham@gmail.com</a>
@@ -1040,7 +1048,7 @@
         "Working independently gave me valuable experience beyond photography, including <b>setting rates, managing contracts, winning clients and running my own business</b>."
       ],
       credit: PHOTO_CREDIT,
-      links: [ { label: "Photography Portfolio", href: "https://mrjohnlatham.com" } ]
+      links: [ { label: "Photography Portfolio", href: "https://mrjohnlatham.github.io" } ]
     },
     "Digitus.Agency": {
       tags: ["UI/UX", "Digital Design", "Mobile Apps", "Facebook Ads"],
@@ -1508,11 +1516,13 @@
     const li = e.target.closest('.item');
     if (!li) { cancelPending(); flipDown(); return; }         // click empty space: everything turns back
     const idx = nodes.indexOf(li);
-    if (projects[idx].end) {                                  // the final photo of me: grows 20px, click again to shrink
-      if (e.target.closest('.shot')) li.classList.toggle('grown');
+    if (projects[idx].start || projects[idx].end) {           // the start and end photos of me don't flip
+      if (!e.target.closest('.shot')) return;
+      cancelPending(); cancelDwell();
+      if (!isCentred(idx)) { flipDown(); goTo(idx); return; }   // not in the middle yet: a click brings it there
+      if (projects[idx].end) li.classList.toggle('grown');    // in the middle: the end photo grows 20px, click again to shrink
       return;
     }
-    if (projects[idx].start) return;                         // the start photo doesn't flip
     cancelDwell();
     if (openIdx === idx) {                                    // showing the description: flip back down and stay down
       flipDown();
@@ -1806,7 +1816,7 @@
 
   // ---------- Words that fade through under "Currently: Available" ----------
   (function () {
-    const WORDS = ['Product Designer', 'Full Time Employment', 'Freelance Contracts', 'Remote / Hybrid / Studio', 'Digital Design', 'Photography', 'Videography', 'Direct Response Copywriting', 'AI Vibe Coding', 'Email Marketing', 'Conversion Optimisation', 'Consultation', 'UI/UX Design', 'Brand Management'];
+    const WORDS = ['Product Designer', 'Full Time Employment', 'Freelance Contracts', 'Remote / Hybrid / Studio', 'Digital Design', 'Photography', 'Videography', 'Direct Response Copywriting', 'Email Marketing', 'Conversion Rate Optimisation', 'Consultation', 'UI/UX Design', 'Brand Management'];
     const a = document.getElementById('rotA'), b = document.getElementById('rotB');
     document.getElementById('rotAll').textContent = 'Available for: ' + WORDS.join(', ');
     let i = 0, cur = a;
