@@ -1219,9 +1219,9 @@
     openIdx = i;
   }
   const isCentred = i => Math.abs((raf ? target : scroller.scrollLeft) - projects[i].x) < 40;
-  function goTo(i) { centring = true; target = clamp(projects[i].x); run(); }
+  function goTo(i) { centring = true; target = clamp(projects[i].x); run(0.3); }
   const FLIP_DELAY = 2000;
-  const CLICK_FLIP_DELAY = 550;
+  const CLICK_FLIP_DELAY = 350;
   let pendingIdx = -1, pendingTimer = 0;
   function cancelPending() { clearTimeout(pendingTimer); pendingIdx = -1; }
   function flipDown() { if (openIdx !== -1) autoOff.add(openIdx); setOpen(-1); }
