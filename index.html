@@ -1407,13 +1407,13 @@
   addEventListener('resize', () => { if (modalOpen) fitFrame(); });
   function updateGallery() {
     fitFrame();
-    const n = gallery.children.length, i = galleryIndex();
+    const n = gallery.querySelectorAll('.gslide').length, i = galleryIndex();
     gNav.hidden = n < 2;
     gPrev.disabled = i <= 0;
     gNext.disabled = i >= n - 1;
   }
   function galleryStep(d) {
-    const n = gallery.children.length;
+    const n = gallery.querySelectorAll('.gslide').length;
     if (n < 2) return;
     const i = Math.min(n - 1, Math.max(0, galleryIndex() + d));
     gallery.scrollTo({ left: i * gallery.clientWidth, behavior: reduce ? 'auto' : 'smooth' });
