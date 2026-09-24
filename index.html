@@ -269,7 +269,7 @@
 
   @media (max-width: 640px) {
     .panel { width: 100%; height: 100vh; height: 100dvh; border: 0; }
-    .close-btn { top: env(safe-area-inset-top, 0px); }
+    .close-btn { top: calc(10px + env(safe-area-inset-top, 0px)); }
     .panel-body { padding: 14px 20px calc(36px + env(safe-area-inset-bottom)); }
     .g-nav { padding-right: 14px; }
     .panel-title { font-size: 26px; }
@@ -1409,7 +1409,7 @@
   function openModal(idx, opener) {
     const p = projects[idx], m = p && p.more;
     if (!m) return;
-    cancelDwell(); cancelPending();
+    cancelDwell(); cancelPending(); resetSheet();
     const pics = (p.imgs ? p.imgs.slice() : [p.img].concat(m.extra || [])).filter(Boolean);
     gallery.textContent = '';
     gallery.classList.toggle('wide', !!p.video);
@@ -1520,7 +1520,68 @@
   }
 
   modalClose.addEventListener('click', closeModal);
+
+  // Every web link, wherever it is, opens in a new tab
+  document.addEventListener('click', e => {
+    const a = e.target.closest && e.target.closest('a[href]');
+    if (!a || !/^https?:/i.test(a.href) || a.origin === location.origin) return;
+    a.target = '_blank';
+    a.rel = 'noopener';
+  }, true);
   document.getElementById('modalBg').addEventListener('click', closeModal);
+
+  const modalBg = document.getElementById('modalBg');
+  let sheetTimer = 0;
+  function resetSheet() {
+    clearTimeout(sheetTimer);
+    panel.style.transition = ''; panel.style.transform = '';
+    modalBg.style.transition = ''; modalBg.style.opacity = '';
+  }
+
+  // On a touch screen, drag the open panel downwards (from the top) to close it
+  (function pullDownToClose() {
+    let x0 = 0, y0 = 0, dy = 0, lastY = 0, lastT = 0, vel = 0, mode = '';
+    panel.addEventListener('touchstart', e => {
+      if (!modalOpen || e.touches.length !== 1) { mode = 'off'; return; }
+      resetSheet();
+      const t = e.touches[0];
+      x0 = t.clientX; y0 = lastY = t.clientY; lastT = e.timeStamp; dy = 0; vel = 0;
+      mode = panel.scrollTop <= 0 ? '' : 'native';
+    }, { passive: true });
+    panel.addEventListener('touchmove', e => {
+      if (mode === 'off' || mode === 'native' || e.touches.length !== 1) return;
+      const t = e.touches[0], dx = t.clientX - x0, moved = t.clientY - y0;
+      if (mode === '') {
+        if (Math.abs(dx) < 8 && Math.abs(moved) < 8) return;
+        if (moved > 0 && moved > Math.abs(dx) * 1.2 && panel.scrollTop <= 0) {
+          mode = 'pull';
+          panel.style.transition = 'none'; modalBg.style.transition = 'none';
+        } else { mode = 'native'; return; }
+      }
+      e.preventDefault();
+      dy = Math.max(0, moved - 8);
+      vel = (t.clientY - lastY) / Math.max(1, e.timeStamp - lastT);
+      lastY = t.clientY; lastT = e.timeStamp;
+      panel.style.transform = 'translateY(' + dy + 'px)';
+      modalBg.style.opacity = String(Math.max(0, 1 - dy / (window.innerHeight * 0.6)));
+    }, { passive: false });
+    function release() {
+      const was = mode;
+      mode = '';
+      if (was !== 'pull') return;
+      if (dy > 110 || (vel > 0.5 && dy > 30)) {
+        panel.style.transition = 'transform .22s ease-in'; modalBg.style.transition = 'opacity .22s ease-in';
+        panel.style.transform = 'translateY(' + window.innerHeight + 'px)'; modalBg.style.opacity = '0';
+        sheetTimer = setTimeout(() => { closeModal(); sheetTimer = setTimeout(resetSheet, 450); }, 200);
+      } else {
+        panel.style.transition = 'transform .25s cubic-bezier(.2, .8, .2, 1)'; modalBg.style.transition = 'opacity .25s ease';
+        panel.style.transform = ''; modalBg.style.opacity = '';
+        sheetTimer = setTimeout(resetSheet, 300);
+      }
+    }
+    panel.addEventListener('touchend', release);
+    panel.addEventListener('touchcancel', release);
+  })();
 
   window.addEventListener('keydown', e => {
     if (modalOpen) {
