@@ -628,8 +628,15 @@
   .beat .links { margin-top: 22px; }
   @media (max-height: 640px) { .rot { font-size: 16px; margin-top: 10px; } .beat .links { margin-top: 12px; } }
 
-  .shot.zoomy img.slide.on, .shot.zoomy img.slide.under { animation: slide-zoom 3.6s ease-out both; }
-  @keyframes slide-zoom { from { transform: scale(1); } to { transform: scale(1.09); } }
+  .arc .arc-i {
+    position: absolute; left: 0; top: 0; object-fit: fill;
+    width: calc(var(--w) * 100cqw); height: calc(var(--h) * 100cqw);
+    margin: calc(var(--h) * -50cqw) 0 0 calc(var(--w) * -50cqw);
+    transform-origin: 50% 50%;
+    visibility: hidden;
+    animation: arc-run var(--T) linear var(--d) infinite;
+    pointer-events: none; -webkit-user-select: none; user-select: none;
+  }
 
   .g-nav { height: 0; padding: 0 22px; position: relative; z-index: 2; align-items: flex-start; }
   .g-nav .g-arrow { margin-top: 5px; }
@@ -639,6 +646,7 @@
 
   @media (prefers-reduced-motion: reduce) {
     .crt-noise { display: none; }
+    .arc-i:first-child { visibility: visible; transform: translate(50cqw, 33cqw); }
     *, *::before, *::after { animation: none !important; transition: none !important; }
   }
 </style>
@@ -950,7 +958,71 @@
     "content/symb-gallery-16.jpg",
     "content/symb-gallery-17.jpg"
   ];
-  const SYMB_CARD_IMGS = [ SYMB_GALLERY[0], SYMB_GALLERY[1], SYMB_GALLERY[3], SYMB_GALLERY[10], SYMB_GALLERY[14], SYMB_GALLERY[4], SYMB_GALLERY[12] ];
+  const SYMB_ARC = [
+    { src: "content/symbiosis-arc-1.jpg", w: 0.2472, h: 0.2421 },
+    { src: "content/symbiosis-arc-2.jpg", w: 0.1776, h: 0.2129 },
+    { src: "content/symbiosis-arc-3.jpg", w: 0.2492, h: 0.2129 },
+    { src: "content/symbiosis-arc-4.jpg", w: 0.1826, h: 0.2169 },
+    { src: "content/symbiosis-arc-5.jpg", w: 0.1332, h: 0.339 },
+    { src: "content/symbiosis-arc-6.jpg", w: 0.1191, h: 0.2996 },
+    { src: "content/symbiosis-arc-7.jpg", w: 0.117, h: 0.2956 },
+    { src: "content/symbiosis-arc-8.jpg", w: 0.118, h: 0.2956 },
+    { src: "content/symbiosis-arc-9.jpg", w: 0.118, h: 0.3027 },
+    { src: "content/symbiosis-arc-10.jpg", w: 0.1301, h: 0.34 },
+    { src: "content/symbiosis-arc-11.jpg", w: 0.1725, h: 0.2179 },
+    { src: "content/symbiosis-arc-12.jpg", w: 0.1191, h: 0.2996 },
+    { src: "content/symbiosis-arc-13.jpg", w: 0.118, h: 0.2986 },
+    { src: "content/symbiosis-arc-14.jpg", w: 0.0767, h: 0.2199 },
+    { src: "content/symbiosis-arc-15.jpg", w: 0.118, h: 0.2956 },
+    { src: "content/symbiosis-arc-16.jpg", w: 0.117, h: 0.2936 },
+    { src: "content/symbiosis-arc-17.jpg", w: 0.113, h: 0.2916 }
+  ];
+
+  // The shallow-arc strip of products on the SYMBIOSIS card. Sizes are in card widths (1 = the width of the card).
+  const ARC = {
+    speed: 0.20,    // how far the strip travels per second
+    size: 1.3,      // how big the products are (1 = the first version)
+    sag: 0.11,      // how much lower the arc sits at the card edges than in the middle (shallow arc)
+    tilt: 0.7,      // how much each product leans with the curve (0 = always upright, 1 = follows the curve fully)
+    base: 0.31,     // how far down the card the middle of the products sit at the top of the arc (0.33 = the exact middle)
+    gap: 0.04,      // space between neighbouring products
+    endGap: 0.5,    // empty space between the last product and the first coming round again (1 = one card width)
+    start: 0.30     // where the first product is when the page loads
+  };
+  const ARC_R = (0.25 + ARC.sag * ARC.sag) / (2 * ARC.sag);
+  const ARC_ITEMS = SYMB_ARC.map(a => ({ src: a.src, w: a.w * ARC.size, h: a.h * ARC.size }));
+  const ARC_M = Math.max(...ARC_ITEMS.map(a => a.w)) / 2 + 0.05;
+  const ARC_LOOP = ARC_ITEMS.reduce((s, a) => s + a.w, 0) + ARC.gap * (ARC_ITEMS.length - 1) + ARC.endGap;
+  const ARC_TIME = ARC_LOOP / ARC.speed;
+
+  (function arcKeyframes() {
+    const pos = x => {
+      const dx = x - 0.5;
+      const y = ARC.base + ARC_R - Math.sqrt(ARC_R * ARC_R - dx * dx);
+      const lean = ARC.tilt * Math.asin(dx / ARC_R) * 180 / Math.PI;
+      return 'translate(' + (x * 100).toFixed(2) + 'cqw, ' + (y * 100).toFixed(2) + 'cqw) rotate(' + lean.toFixed(2) + 'deg)';
+    };
+    const span = 1 + 2 * ARC_M, steps = Math.ceil(span / 0.02);
+    let css = '@keyframes arc-run {';
+    for (let k = 0; k <= steps; k++) {
+      const x = -ARC_M + span * k / steps;
+      css += ((k / steps) * span / ARC_LOOP * 100).toFixed(3) + '% { visibility: visible; transform: ' + pos(x) + '; }';
+    }
+    const end = span / ARC_LOOP * 100, last = pos(1 + ARC_M);
+    css += (end + 0.01).toFixed(3) + '% { visibility: hidden; transform: ' + last + '; } 100% { visibility: hidden; transform: ' + last + '; } }';
+    const st = document.createElement('style');
+    st.textContent = css;
+    document.head.appendChild(st);
+  })();
+
+  function arcMarkup() {
+    let d = 0;
+    return '<div class="arc" aria-hidden="true" style="--T:' + ARC_TIME.toFixed(2) + 's">' + ARC_ITEMS.map((a, i) => {
+      if (i) d += ARC_ITEMS[i - 1].w / 2 + ARC.gap + a.w / 2;
+      const along = (((ARC_M + ARC.start - d) % ARC_LOOP) + ARC_LOOP) % ARC_LOOP;
+      return '<img class="arc-i" src="' + a.src + '" alt="" draggable="false" style="--w:' + a.w + ';--h:' + a.h + ';--d:' + (-along / ARC.speed).toFixed(2) + 's">';
+    }).join('') + '</div>';
+  }
 
   function ordinal(n) {
     const s = ["th", "st", "nd", "rd"], v = n % 100;
@@ -981,7 +1053,7 @@
       desc: "Building a self-publishing business through photography, advertising and print-on-demand books." },
     { year: "2023", kind: "Freelance", title: "SISOMA Software", dx: 180, imgs: SISOMA_IMGS, snap: true, every: 1000, ratio: "1000 / 717", panelRatio: "1000 / 717",
       desc: "Returning to UI design to transform a social media platform from basic interface to polished digital product." },
-    { year: "2024", kind: "Freelance", title: "SYMBIOSIS", dx: 180, imgs: SYMB_GALLERY, cardImgs: SYMB_CARD_IMGS, ratio: "3 / 2", panelRatio: "3 / 2", pad: true, galleryWhite: true, zoom: true,
+    { year: "2024", kind: "Freelance", title: "SYMBIOSIS", dx: 180, imgs: SYMB_GALLERY, arc: true, ratio: "3 / 2", panelRatio: "3 / 2", pad: true, galleryWhite: true,
       desc: "A long-standing client relationship that grew from packaging design into e-commerce and digital product development." },
     { year: "2025", kind: "Freelance", title: "Audio UI Design", dx: 210, scroll: true, grow: 10, img: "content/audio-ui-design-1.jpg",
       desc: "Combining my UI design background with my passion for music to enter the audio software industry." },
@@ -1033,10 +1105,11 @@
     if (p.scale) li.style.setProperty('--ws', p.scale);
     if (p.grow) li.style.setProperty('--wx', p.grow + 'px');
     let shotContent = '';
-    if (p.imgs) {
+    if (p.arc) {
+      shotContent = arcMarkup();
+    } else if (p.imgs) {
       p.cur = 0;
-      const faceImgs = p.cardImgs || p.imgs;
-      shotContent = faceImgs.map((u, k) =>
+      shotContent = p.imgs.map((u, k) =>
         '<img class="slide' + (k === 0 ? ' on' : '') + '" src="' + u + '" alt="' + (k === 0 ? p.title : '') + '">').join('');
     } else if (p.video) {
       shotContent = '<video class="vid" data-vid="' + p.video + '" poster="' + (p.poster || '') + '" muted loop autoplay playsinline preload="auto" disablepictureinpicture aria-hidden="true"></video>';
@@ -1047,7 +1120,7 @@
     }
     li.innerHTML =
       '<article class="card">' +
-        '<div class="shot' + (p.pad ? ' padded' : '') + (p.pad && p.galleryWhite ? ' pad-white' : '') + (p.snap ? ' snap' : '') + (p.zoom ? ' zoomy' : '') + '"' + (p.ratio ? ' style="aspect-ratio:' + p.ratio + '"' : '') + '>' +
+        '<div class="shot' + (p.pad && !p.arc ? ' padded' : '') + (p.pad && p.galleryWhite && !p.arc ? ' pad-white' : '') + (p.snap ? ' snap' : '') + '"' + (p.ratio ? ' style="aspect-ratio:' + p.ratio + '"' : '') + '>' +
           '<div class="flipper">' +
             '<div class="face front" aria-hidden="true">' + shotContent + (p.crt ? '<canvas class="crt-noise" width="120" height="120" aria-hidden="true"></canvas>' : '') + (p.eq ? '<div class="eq-bars"><i></i><i></i><i></i><i></i></div>' : '') + '</div>' +
             ((p.start || p.end) ? '' : '<div class="face back">' + ((p.imgs || p.video || (p.scroll && p.img)) ? '<div class="mirror" aria-hidden="true">' + shotContent + '</div>' : '') + '<p>' + p.desc + '</p>' + (p.more ? '<button type="button" class="more-btn" tabindex="-1" aria-label="Read more: ' + p.title + '"><span class="rm">See More</span><span class="plus"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M5 1v8M1 5h8"/></svg></span></button>' : '') + '</div>') +
@@ -1460,7 +1533,7 @@
     e.preventDefault();
   });
 
-  const shows = projects.map((p, i) => (p.imgs && p.imgs.length > 1) ? { p, i } : null).filter(Boolean);
+  const shows = projects.map((p, i) => (p.imgs && p.imgs.length > 1 && !p.arc) ? { p, i } : null).filter(Boolean);
   if (!reduce) shows.forEach(({ p, i }) => {
     setInterval(() => {
       const sets = [...nodes[i].querySelectorAll('.face')].map(f => f.querySelectorAll('.slide')).filter(x => x.length);
