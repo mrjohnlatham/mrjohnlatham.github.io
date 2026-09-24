@@ -621,8 +621,10 @@
   .avail-dot { position: relative; width: 9px; height: 9px; border-radius: 50%; background: #39ff14; box-shadow: 0 0 8px 1px rgba(57, 255, 20, .9); }
 
   .rot { margin-top: 16px; min-height: 2.5em; display: grid; align-items: center; justify-items: center; font-size: 18px; line-height: 1.2; font-weight: 600; letter-spacing: -0.01em; color: #fff; text-wrap: balance; }
-  .rot .w { grid-area: 1 / 1; opacity: 0; will-change: opacity, transform, filter; }
-  .rot .w.in { opacity: 1; }
+  .rot { perspective: 700px; }
+  .rot-flip { width: 100%; display: grid; align-items: center; justify-items: center; transform-style: preserve-3d; transition: transform .55s cubic-bezier(.45, .05, .25, 1); }
+  .rot .w { grid-area: 1 / 1; -webkit-backface-visibility: hidden; backface-visibility: hidden; }
+  .rot .w.b { transform: rotateX(180deg); }
   .beat .links { margin-top: 22px; }
   @media (max-height: 640px) { .rot { font-size: 15px; margin-top: 10px; } .beat .links { margin-top: 12px; } }
 
@@ -672,7 +674,7 @@
     <section class="beat current">
       <p class="year today-date" id="todayDate"></p>
       <p class="avail"><span class="avail-lbl">Currently:</span> <span class="avail-on">Available<i class="avail-dot" aria-hidden="true"></i></span></p>
-      <div class="rot" id="rot"><span class="w in" id="rotA" aria-hidden="true"></span><span class="w" id="rotB" aria-hidden="true"></span><span class="sr-only" id="rotAll"></span></div>
+      <div class="rot" id="rot"><div class="rot-flip" id="rotFlip"><span class="w" id="rotA" aria-hidden="true"></span><span class="w b" id="rotB" aria-hidden="true"></span></div><span class="sr-only" id="rotAll"></span></div>
       <p class="links">
         <a href="mailto:hellojohnlatham@gmail.com">hellojohnlatham@gmail.com</a>
       </p>
@@ -1540,13 +1542,17 @@
     const WORDS = ['Product Designer', 'Full Time Employment', 'Freelance Contracts', 'Remote / Hybrid / Studio', 'Digital Design', 'Photography', 'Videography', 'Direct Response Copywriting', 'Email Marketing', 'Conversion Rate Optimisation', 'Consultation', 'UI/UX Design', 'Brand Management'];
     const a = document.getElementById('rotA'), b = document.getElementById('rotB');
     document.getElementById('rotAll').textContent = 'Available for: ' + WORDS.join(', ');
-    let i = 0, cur = a;
+    const flip = document.getElementById('rotFlip');
+    let i = 0, turns = 0;
     a.textContent = WORDS[0];
+    if (reduce) flip.style.transition = 'none';
     setInterval(() => {
       if (document.hidden) return;
       i = (i + 1) % WORDS.length;
-      a.textContent = WORDS[i];
-    }, 2800);
+      (turns % 2 === 0 ? b : a).textContent = WORDS[i];
+      turns++;
+      flip.style.transform = 'rotateX(' + turns * 180 + 'deg)';
+    }, 1800);
   })();
 
   document.getElementById('home').addEventListener('click', () => location.reload());
