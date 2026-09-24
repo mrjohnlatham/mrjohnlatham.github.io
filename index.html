@@ -265,9 +265,11 @@
     scrollbar-width: none;
     cursor: grab;
     -webkit-overflow-scrolling: touch;
-    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 7%, #000 93%, transparent 100%);
-            mask-image: linear-gradient(90deg, transparent 0, #000 7%, #000 93%, transparent 100%);
   }
+  .edge { position: fixed; top: 0; bottom: 0; width: 7vw; z-index: 2; pointer-events: none; }
+  .edge.l { left: 0; background: linear-gradient(90deg, #000, rgba(0, 0, 0, 0)); }
+  .edge.r { right: 0; background: linear-gradient(270deg, #000, rgba(0, 0, 0, 0)); }
+  body.moving .card, body.moving .stem, body.moving .face.front::after { transition: none; }
   .scroller::-webkit-scrollbar { display: none; }
   .scroller.dragging { cursor: grabbing; -webkit-user-select: none; user-select: none; }
   .scroller:focus-visible { outline: 1px solid rgba(255,255,255,.4); outline-offset: -3px; }
@@ -683,6 +685,8 @@
     </section>
   </div>
 </main>
+<div class="edge l" aria-hidden="true"></div>
+<div class="edge r" aria-hidden="true"></div>
 
 <footer class="foot">
   Everything you see was made by me © John Latham
@@ -1088,8 +1092,10 @@
       let t = 1 - Math.abs(projects[i].x - sl) / radius;
       t = t < 0 ? 0 : t > 1 ? 1 : t;
       t = t * t * (3 - 2 * t);
-      nodes[i].style.setProperty('--t', t.toFixed(3));
-      nodes[i].classList.toggle('active', i === nearest && !projects[i].start && !projects[i].end);
+      const tv = t.toFixed(3);
+      if (nodes[i]._t !== tv) { nodes[i]._t = tv; nodes[i].style.setProperty('--t', tv); }
+      const act = i === nearest && !projects[i].start && !projects[i].end;
+      if (nodes[i]._a !== act) { nodes[i]._a = act; nodes[i].classList.toggle('active', act); }
     }
     document.body.classList.toggle('scrolled', sl > 40);
   }
@@ -1099,23 +1105,33 @@
   const maxScroll = () => Math.max(0, scroller.scrollWidth - scroller.clientWidth);
   const clamp = v => Math.min(maxScroll(), Math.max(0, v));
 
-  function tick() {
-    const ease = reduce ? 1 : easeK;
+  let lastTick = 0;
+  function tick(now) {
+    const dt = Math.min(64, lastTick ? now - lastTick : 16.7);
+    lastTick = now;
+    const ease = reduce ? 1 : 1 - Math.pow(1 - easeK, dt / 16.7);
     current += (target - current) * ease;
-    if (Math.abs(target - current) < 0.5) {
+    if (Math.abs(target - current) < 0.3) {
       current = target;
       raf = null;
       centring = false;
       scroller.scrollLeft = current;
+      paint();
       return;
     }
     scroller.scrollLeft = current;
+    paint();
     raf = requestAnimationFrame(tick);
   }
   let easeK = 0.14;
   function run(e = 0.14) {
     easeK = e;
-    if (!raf) { current = scroller.scrollLeft; raf = requestAnimationFrame(tick); }
+    if (!raf) { current = scroller.scrollLeft; lastTick = 0; raf = requestAnimationFrame(tick); }
+  }
+  function stopMotion() {
+    if (raf) { cancelAnimationFrame(raf); raf = null; }
+    centring = false;
+    current = target = scroller.scrollLeft;
   }
   function nudge(dx) {
     centring = false;
@@ -1135,8 +1151,12 @@
     run(0.26);
   }
 
+  let movingTimer = 0;
   scroller.addEventListener('scroll', () => {
     if (!raf) current = target = scroller.scrollLeft;
+    document.body.classList.add('moving');
+    clearTimeout(movingTimer);
+    movingTimer = setTimeout(() => document.body.classList.remove('moving'), 150);
     queuePaint();
   }, { passive: true });
 
@@ -1157,6 +1177,7 @@
   let startX = 0, startSL = 0, lastX = 0, lastT = 0, vel = 0;
 
   scroller.addEventListener('pointerdown', e => {
+    stopMotion();
     if (e.pointerType !== 'mouse' || e.button !== 0) return;
     pressed = true; dragging = false;
     startX = lastX = e.clientX;
@@ -1196,8 +1217,9 @@
     setTimeout(() => { suppressClick = false; }, 60);
     if (performance.now() - lastT > 80) vel = 0;
     current = scroller.scrollLeft;
-    target = clamp(current - vel * 320);
-    run();
+    const K = 0.07;
+    target = clamp(current - Math.max(-2500, Math.min(2500, vel * 16.7 / K)));
+    run(K);
   }
   scroller.addEventListener('pointerup', release);
   scroller.addEventListener('pointercancel', release);
