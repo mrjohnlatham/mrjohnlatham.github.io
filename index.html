@@ -61,7 +61,7 @@
   .top p {
     margin-top: 4px;
     font-size: 13px;
-    opacity: .6;
+    color: rgba(255, 255, 255, .6);
   }
 
   .roles { display: flex; flex-wrap: wrap; justify-content: center; }
@@ -75,6 +75,30 @@
     vertical-align: -.12em;
   }
   .roles .br { display: none; }
+  .roles span { position: relative; }
+  .roles span::after {
+    content: attr(data-text);
+    content: attr(data-text) / "";
+    position: absolute; left: -16px; top: -12px;
+    padding: 12px 16px;
+    white-space: nowrap;
+    color: #fff;
+    text-shadow: 0 0 8px rgba(255, 255, 255, .9), 0 0 18px rgba(255, 255, 255, .55);
+    -webkit-mask-image: linear-gradient(90deg, transparent 35%, #000 50%, transparent 65%);
+            mask-image: linear-gradient(90deg, transparent 35%, #000 50%, transparent 65%);
+    -webkit-mask-size: 200% 100%;
+            mask-size: 200% 100%;
+    -webkit-mask-repeat: no-repeat;
+            mask-repeat: no-repeat;
+    -webkit-mask-position: 135% 0;
+            mask-position: 135% 0;
+    animation: glow-sweep 2.8s cubic-bezier(.4, 0, .6, 1) 1.5s 1 both;
+    pointer-events: none;
+  }
+  @keyframes glow-sweep {
+    from { -webkit-mask-position: 135% 0; mask-position: 135% 0; }
+    to   { -webkit-mask-position: -35% 0; mask-position: -35% 0; }
+  }
   @media (max-width: 480px) {
     .top p { font-size: 11px; }
     .roles span:not(:first-child)::before { margin: 0 .55em; }
@@ -162,10 +186,6 @@
     outline: none;
   }
   .panel-hero { position: relative; }
-  .panel-hero.framed::after {
-    content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
-    background: rgba(255, 255, 255, .14);
-  }
   .gallery {
     display: flex;
     overflow-x: auto;
@@ -490,12 +510,6 @@
   .item.end .face.front::after { display: none; }
   .item.end .shot, .item.end .shot img, .item.end .face { border-radius: 50%; overflow: hidden; }
   .item.start .card { cursor: default; }
-  .item.framed .face.front::before, .item.framed .face.back::after {
-    content: ""; position: absolute; left: 0; top: 0; width: 200%; height: 200%;
-    box-sizing: border-box; border: 1px solid rgba(255, 255, 255, .27);
-    transform: scale(.5); transform-origin: 0 0;
-    z-index: 4; pointer-events: none;
-  }
 
   .vid { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; background: #000; }
   .gslide .vid { object-fit: contain; }
@@ -656,7 +670,7 @@
 
 <header class="top">
   <h1><button type="button" class="home" id="home" aria-label="John Latham: back to the start">John Latham</button></h1>
-  <p class="roles"><span>Creative Digital Publisher</span></p>
+  <p class="roles"><span data-text="Creative Digital Publisher">Creative Digital Publisher</span></p>
 </header>
 
 <main class="scroller" id="scroller" tabindex="0" aria-label="Timeline of my work. Scroll sideways to move forward through time.">
@@ -1046,7 +1060,7 @@
       desc: "My first in-house role, expanding from advertising and photography into email marketing and team management." },
     { year: "2017", kind: "Freelance", title: "Commercial Photography", dx: 150, img: "content/commercial-photography-1.jpg", ratio: "1000 / 709", stem: 46,
       desc: "A move into full-time photography covering music, sport, lifestyle, brands, commercial work and weddings." },
-    { year: "2019", kind: "Full Time Employment", title: "Digitus.Agency", dx: 200, video: 'digitus', poster: POSTERS.digitus, frame: true,
+    { year: "2019", kind: "Full Time Employment", title: "Digitus.Agency", dx: 200, video: 'digitus', poster: POSTERS.digitus,
       desc: "Returning to design through UI/UX, digital products, software interfaces and Facebook advertising." },
     { year: "2020", kind: "Own Business", title: "Audible Book Publishing", dx: 170, eq: true, img: "content/audible-book-publishing-1.jpg", ratio: "1200 / 720", panelRatio: "1200 / 720",
       desc: "Turning a decade of wedding photography experience into a published audiobook on Amazon Audible." },
@@ -1099,7 +1113,7 @@
 
   const nodes = projects.map((p, i) => {
     const li = document.createElement('li');
-    li.className = 'item ' + p.side + (p.start || p.end ? ' start' : '') + (p.end ? ' end' : '') + (p.frame ? ' framed' : '');
+    li.className = 'item ' + p.side + (p.start || p.end ? ' start' : '') + (p.end ? ' end' : '');
     li.style.setProperty('--x', p.x + 'px');
     li.style.setProperty('--i', i);
     li.style.setProperty('--gap', p.start || p.end ? p.gap + 'px' : (p.gap / 8) + 'vh');
@@ -1401,7 +1415,6 @@
     gallery.classList.toggle('wide', !!p.video);
     gallery.classList.toggle('padded', !!p.pad);
     gallery.classList.toggle('white', !!p.galleryWhite);
-    document.getElementById('panelHero').classList.toggle('framed', !!p.frame);
     gallery.style.aspectRatio = p.panelRatio || '';
     const fit = !p.panelRatio && !p.video && !p.scroll && pics.length > 0;
     gallery.style.transition = 'none';
