@@ -351,6 +351,17 @@
     text-decoration: underline;
     text-decoration-color: rgba(255,255,255,.45);
     text-underline-offset: 3px;
+    display: inline-block;
+    animation: wiggle 3s ease-in-out infinite;
+  }
+  .beat .links a:hover { animation-play-state: paused; }
+  @keyframes wiggle {
+    0%, 22%, 100% { transform: rotate(0); }
+    3%  { transform: rotate(-6deg); }
+    7%  { transform: rotate(6deg); }
+    11% { transform: rotate(-5deg); }
+    15% { transform: rotate(4deg); }
+    19% { transform: rotate(-2deg); }
   }
   .beat .links a:focus-visible { outline: 1px solid #fff; outline-offset: 3px; }
 
