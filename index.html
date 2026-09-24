@@ -13,8 +13,7 @@
 <style>
   :root {
     --card-w: max(245px, calc(clamp(170px, min(22vw, 27vh), 240px) * 1.05 + 15px));
-    --box: #242424;        /* placeholder image, resting */
-    --box-lit: #5c5c5c;    /* placeholder image, when the card is in focus */
+    --box: #242424;
     --pad: 20px;
   }
 
@@ -25,7 +24,7 @@
     background: #000;
     color: #fff;
     overflow: hidden;
-    overscroll-behavior: none;      /* stop any bounce/rubber-band from revealing what's behind the page */
+    overscroll-behavior: none;
   }
   html { color-scheme: dark; }
 
@@ -34,8 +33,6 @@
     -webkit-font-smoothing: antialiased;
     -webkit-text-size-adjust: 100%;
   }
-
-  /* ---------- Fixed chrome ---------- */
 
   .top {
     position: fixed;
@@ -51,7 +48,6 @@
     font-weight: 600;
     letter-spacing: -0.01em;
   }
-  /* the name is a button that reloads the page (the header itself doesn't take clicks, so it never blocks the timeline) */
   .top .home {
     pointer-events: auto;
     padding: 0; margin: 0;
@@ -68,7 +64,6 @@
     opacity: .6;
   }
 
-  /* Roles, each pair separated by a small vertical line */
   .roles { display: flex; flex-wrap: wrap; justify-content: center; }
   .roles span:not(:first-child)::before {
     content: "";
@@ -80,11 +75,11 @@
     vertical-align: -.12em;
   }
   .roles .br { display: none; }
-  @media (max-width: 480px) {                 /* narrow screens: two tidy lines, no stray divider */
+  @media (max-width: 480px) {
     .top p { font-size: 11px; }
     .roles span:not(:first-child)::before { margin: 0 .55em; }
   }
-  @media (max-width: 400px) {                 /* the narrowest phones: break onto two lines without a stray divider */
+  @media (max-width: 400px) {
     .roles .br { display: block; flex-basis: 100%; height: 0; }
     .roles .br + span::before { display: none; }
   }
@@ -111,8 +106,6 @@
   }
   .foot a:focus-visible { outline: 1px solid #fff; outline-offset: 3px; }
 
-  /* ---------- "+" on the back of a card, and the read-more panel ---------- */
-
   .more-btn {
     position: absolute;
     right: 7px; bottom: 6px;
@@ -130,11 +123,10 @@
     cursor: pointer;
     transition: opacity .2s ease;
   }
-  .more-btn::after { content: ""; position: absolute; inset: -9px; }   /* bigger tap target */
+  .more-btn::after { content: ""; position: absolute; inset: -9px; }
   .more-btn .rm { text-shadow: 0 0 3px rgba(0, 0, 0, .85); }
   .more-btn .plus { position: relative; display: grid; place-items: center; width: 12px; height: 12px; }
   .more-btn .plus svg { width: 10px; height: 10px; pointer-events: none; filter: drop-shadow(0 0 1.5px rgba(0, 0, 0, .85)); }
-  /* a ring that pulses out from the plus every 4.8s: once for every two pulses of the timeline dot (2.4s) */
   .more-btn .plus::before {
     content: ""; position: absolute; inset: -6px;
     border: 1px solid rgba(255, 255, 255, .85); border-radius: 50%;
@@ -162,7 +154,7 @@
     position: relative;
     width: min(560px, 92vw);
     height: min(calc(100vh - 96px), 900px);
-    height: min(calc(100dvh - 96px), 900px);         /* a little space above and below, so the page shows around it */
+    height: min(calc(100dvh - 96px), 900px);
     overflow-y: auto;
     overscroll-behavior: contain;
     background: #000;
@@ -170,10 +162,9 @@
     outline: none;
   }
   .panel-hero { position: relative; }
-  /* the same hairline frame as the card, but only along the bottom, dividing the picture from the text */
   .panel-hero.framed::after {
     content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
-    background: rgba(255, 255, 255, .14);   /* matches the modal's own outer border */
+    background: rgba(255, 255, 255, .14);
   }
   .gallery {
     display: flex;
@@ -186,15 +177,14 @@
     background: #000;
     outline: none;
   }
-  .gallery.wide { aspect-ratio: 16 / 9; }                    /* video is 16:9: no black bars */
-  .gallery.fit { aspect-ratio: auto; transition: height .3s ease; }   /* pictures: the frame matches each picture's own shape, so there are no black bars */
+  .gallery.wide { aspect-ratio: 16 / 9; }
+  .gallery.fit { aspect-ratio: auto; transition: height .3s ease; }
   .gallery.white { background: #fff; }
   .gallery::-webkit-scrollbar { display: none; }
   .gslide { position: relative; flex: 0 0 100%; scroll-snap-align: start; scroll-snap-stop: always; }
   .gslide.empty { background: var(--box); }
   .gslide .vtrack img { display: block; width: 100%; height: auto; object-fit: fill; }
   .gslide img { display: block; width: 100%; height: 100%; object-fit: contain; }
-  /* Left / right toggle: two small arrows under the picture, on the right. White when you can go that way, grey when you can't. */
   .panel-caption { padding: 14px 20px 0 28px; text-align: right; font-size: 11px; color: rgba(255,255,255,.45); }
   .panel-caption:empty { display: none; }
   .g-nav { flex: 0 0 auto; display: flex; justify-content: flex-end; gap: 4px; padding: 6px 22px 0; }
@@ -211,7 +201,7 @@
     cursor: pointer;
     transition: color .2s ease, opacity .2s ease;
   }
-  .g-arrow::after { content: ""; position: absolute; inset: -8px; }   /* bigger tap target, same as the plus button */
+  .g-arrow::after { content: ""; position: absolute; inset: -8px; }
   .g-arrow:disabled { color: #5c5c5c; cursor: default; }
   .g-arrow:not(:disabled):hover { opacity: .7; }
   .g-arrow:focus-visible, .panel-links a:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
@@ -223,8 +213,8 @@
     padding: 0;
     display: grid;
     place-items: center;
-    color: #111;                     /* black X */
-    background: #fff;                /* white circle */
+    color: #111;
+    background: #fff;
     border-radius: 50%;
     border: 0;
     cursor: pointer;
@@ -235,7 +225,6 @@
   .panel-body { padding: 18px 28px 40px; }
   .panel-year { font-size: 13px; font-variant-numeric: tabular-nums; opacity: .6; }
   .panel-title { margin-top: 6px; font-size: 30px; line-height: 1.15; font-weight: 600; letter-spacing: -0.015em; }
-  /* Skill pills: shallow, light grey, and just labels (you can't press them) */
   .panel-tags { list-style: none; margin-top: 14px; display: flex; flex-wrap: wrap; gap: 6px; }
   .panel-tags:empty { display: none; }
   .tag {
@@ -251,22 +240,20 @@
   .panel-text p + p { margin-top: 14px; }
   .panel-text a { color: #fff; text-decoration-color: rgba(255, 255, 255, .5); }
   .panel-text .para-head { display: block; margin-bottom: 4px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; opacity: .5; }
-  .panel-text b { font-weight: 600; }   /* only 400/500/600 are loaded; 700 has no webfont so it wouldn't render bold */
+  .panel-text b { font-weight: 600; }
   .panel-text a:hover { text-decoration-color: #fff; }
   .panel-links { margin-top: 24px; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
   .panel-links:empty { display: none; }
   .panel-links a { color: #fff; font-size: 14px; text-decoration: underline; text-decoration-color: rgba(255, 255, 255, .45); text-underline-offset: 4px; }
   .panel-links a:hover { text-decoration-color: #fff; }
 
-  @media (max-width: 640px) {                        /* phones: fills the whole screen */
+  @media (max-width: 640px) {
     .panel { width: 100%; height: 100vh; height: 100dvh; border: 0; }
     .close-btn { top: env(safe-area-inset-top, 0px); }
     .panel-body { padding: 14px 20px calc(36px + env(safe-area-inset-bottom)); }
     .g-nav { padding-right: 14px; }
     .panel-title { font-size: 26px; }
   }
-
-  /* ---------- Scroller ---------- */
 
   .scroller {
     position: fixed;
@@ -285,10 +272,7 @@
   .scroller.dragging { cursor: grabbing; -webkit-user-select: none; user-select: none; }
   .scroller:focus-visible { outline: 1px solid rgba(255,255,255,.4); outline-offset: -3px; }
 
-  /* the whole timeline sits a little below the screen's midpoint so it's centred in the space under the title */
   .track { position: relative; height: 100%; transform: translateY(4vh); }
-
-  /* ---------- The timeline itself ---------- */
 
   .line {
     position: absolute;
@@ -309,26 +293,10 @@
     border-radius: 50%;
     background: #fff;
   }
-  /* The beginning: bursts in when the page loads */
   .dot.start { width: 9px; height: 9px; margin: -4px 0 0 -4.5px;
     animation: dot-in .7s cubic-bezier(.2, .9, .3, 1.3) .1s backwards; }
   .dot.start.pulse { animation: dot-in .7s cubic-bezier(.2, .9, .3, 1.3) .1s backwards, pulse 2.4s ease-out infinite; }
-  .ring {
-    position: absolute;
-    top: 50%;
-    left: 50vw;
-    width: 9px; height: 9px;
-    translate: -50% -50%;
-    margin-top: .5px;
-    border: 1px solid #fff;
-    border-radius: 50%;
-    opacity: 0;
-    pointer-events: none;
-    animation: burst 1.8s cubic-bezier(.1, .6, .3, 1) .25s backwards;
-  }
-  .ring.second { animation-delay: .55s; }
 
-  /* Now: the live, pulsing end of the line */
   .dot.now {
     left: calc(50vw + var(--end));
     width: 9px; height: 9px;
@@ -336,7 +304,6 @@
   }
   .dot.now.pulse { animation: pulse 2.4s ease-out infinite; }
 
-  /* Text under the start dot and under the now dot */
   .beat {
     position: absolute;
     top: calc(50% + 30px);
@@ -365,25 +332,6 @@
   }
   .beat .links a:focus-visible { outline: 1px solid #fff; outline-offset: 3px; }
 
-  /* Skills, above the "now" dot */
-  .skills {
-    position: absolute;
-    left: calc(50vw + var(--end));
-    bottom: calc(50% + 34px);
-    translate: -50% 0;
-    display: flex;
-    gap: 28px;
-    width: max-content;
-    max-width: 90vw;
-  }
-  .skills ul {
-    list-style: none;
-    font-size: 12px;
-    line-height: 1.8;
-    opacity: .72;
-  }
-  .skills ul:first-child { text-align: right; }
-
   .hint { margin-top: 18px; transition: opacity .5s, visibility 0s linear 0s; }
   body.scrolled .hint { opacity: 0; visibility: hidden; transition: opacity .5s, visibility 0s linear .5s; }
   .hint-in {
@@ -391,21 +339,18 @@
     cursor: pointer;
     transition: opacity .2s ease;
     display: inline-flex;
-    flex-direction: column;                       /* text on one line, arrow on the line below */
+    flex-direction: column;
     align-items: center;
     gap: 8px;
     font-size: 12px;
-    opacity: .4;                                  /* same darkness as the copyright line */
+    opacity: .4;
     animation: fade 1s ease 1.9s backwards;
   }
   .hint-in:hover { opacity: .75; }
   .hint-in:focus-visible { outline: 1px solid #fff; outline-offset: 6px; }
   .hint svg { width: 26px; height: 14px; animation: nudge 1.6s ease-in-out 2.4s infinite; }
 
-  /* ---------- Project cards ---------- */
-
   .items { list-style: none; }
-  /* pictures and video can't be picked up and dragged away by the browser, so dragging them drags the timeline */
   .item { -webkit-user-select: none; user-select: none; }
   .item img, .item video { -webkit-user-drag: none; user-drag: none; }
 
@@ -423,7 +368,6 @@
   .item.below { translate: -50% 0; margin-top: 1px; flex-direction: column-reverse; }
   .item.open { z-index: 2; }
 
-  /* --t runs from 0 (far from centre) to 1 (centred), set from JS on scroll */
   .card {
     width: 100%;
     background: transparent;
@@ -437,7 +381,6 @@
   .item.above .card { transform-origin: 50% 100%; }
   .item.below .card { transform-origin: 50% 0; }
 
-  /* Opened: a little bigger, a little thicker (1px border + 1px inner ring) */
   .item.open .card {
     --t: 1;
   }
@@ -457,10 +400,10 @@
     transition: transform .6s cubic-bezier(.45, .05, .25, 1);
     will-change: transform;
   }
-  .item.open .flipper { 
+  .item.open .flipper {
     transform: rotateY(-180deg);
     -webkit-transform: rotateY(-180deg);
-  }     /* opening: right edge swings over to the left, like turning a page; closing goes back left to right */
+  }
 
   .face {
     position: absolute;
@@ -472,7 +415,6 @@
     -webkit-transform: translateZ(0);
             transform: translateZ(0);
   }
-  /* The other side: same picture, a dark see-through block, white text */
   .face.back {
     transform: rotateY(180deg);
     -webkit-transform: rotateY(180deg);
@@ -485,7 +427,6 @@
     background-size: cover;
     background-repeat: no-repeat;
   }
-  /* only the side that's facing you takes clicks */
   .item.open .face.front { pointer-events: none; }
   .item:not(.open) .face.back { pointer-events: none; }
   .face.back .mirror { position: absolute; inset: 0; z-index: 0; }
@@ -506,14 +447,9 @@
     flex-grow: 0;
   }
 
-
-  /* ---------- The old monitor in the start photo: its screen flickers and crackles ----------
-     The shape (--crt) traces the screen as percentages of the photo. Four layers sit inside that shape:
-     a glow that flickers, scanlines that crawl, static that jitters, and a bright band that rolls down. */
   :root {
     --crt: polygon(7.85% 28.7%, 13.75% 25.6%, 19.75% 23.4%, 21.6% 32%, 23.1% 41.4%, 23.6% 50.4%, 18.25% 56%, 12.9% 61.4%, 10.35% 45%);
   }
-  /* Little 4-bar audio EQ graphic, bottom-right corner of the picture */
   .eq-bars {
     position: absolute; z-index: 3; right: 10px; bottom: 10px;
     display: flex; align-items: flex-end; gap: 3px;
@@ -529,7 +465,6 @@
   .eq-bars i:nth-child(4) { height: 75%; animation-delay: -0.4s; }
   @keyframes eq-bounce { 0%, 100% { transform: scaleY(.35); } 50% { transform: scaleY(1); } }
 
-  /* moving TV static (a canvas redrawn ~14 times a second by the script), clipped to the monitor screen */
   .crt-noise {
     position: absolute; inset: 0; z-index: 2;
     width: 100%; height: 100%;
@@ -540,8 +475,6 @@
     mix-blend-mode: screen;
   }
 
-  /* Dark until the card is near the middle of the screen, then it fades into colour.
-     --t is 0 far from the centre and 1 in the centre (set from JS as you scroll). */
   .face.front::after {
     content: "";
     position: absolute;
@@ -554,9 +487,7 @@
   }
   .item.end .face.front::after { display: none; }
   .item.end .shot, .item.end .shot img, .item.end .face { border-radius: 50%; overflow: hidden; }
-  .item.start .card { cursor: default; }                     /* start and end photos: not clickable */
-  /* a hairline light-grey frame round a card's picture (front and back), for cards marked frame: true. Not used in the panel.
-     Drawn at double size and scaled down by half, so the line is half a pixel thick on any screen. */
+  .item.start .card { cursor: default; }
   .item.framed .face.front::before, .item.framed .face.back::after {
     content: ""; position: absolute; left: 0; top: 0; width: 200%; height: 200%;
     box-sizing: border-box; border: 1px solid rgba(255, 255, 255, .27);
@@ -564,11 +495,9 @@
     z-index: 4; pointer-events: none;
   }
 
-  /* Video that plays silently on a loop (card, back of card, and read-more panel) */
   .vid { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; background: #000; }
   .gslide .vid { object-fit: contain; }
 
-  /* Tall image drifting upward behind the 16:9 frame, looping seamlessly */
   .scrollwin { position: absolute; inset: 0; overflow: hidden; }
   .vtrack {
     position: absolute;
@@ -580,21 +509,8 @@
   .shot .vtrack img { position: static; z-index: auto; display: block; width: 100%; height: auto; object-fit: fill; }
   @keyframes vscroll { to { transform: translateY(-50%); } }
 
-  /* A filmstrip of pictures drifting sideways, looping seamlessly (the horizontal twin of the scroll above) */
-  .scrollwinX { position: absolute; inset: 0; overflow: hidden; background: #fff; }
-  .htrack {
-    position: absolute; left: 0; top: 0;
-    height: 100%;
-    display: flex;
-    will-change: transform;
-    animation: hscroll var(--durx, 30s) linear infinite;
-  }
-  .htrack img { display: block; height: 100%; width: auto; flex: 0 0 auto; object-fit: contain; }
-  @keyframes hscroll { to { transform: translateX(-50%); } }
-
-  /* Cards with several images: the new one fades in over the old one */
   .shot img.slide { position: absolute; inset: 0; opacity: 0; z-index: 0; transition: opacity 1s ease; }
-  .shot.snap img.slide { transition: none; }                 /* cards marked snap: change instantly, no crossfade */
+  .shot.snap img.slide { transition: none; }
   .shot img.slide.under { opacity: 1; z-index: 1; transition: none; }
   .shot img.slide.on { opacity: 1; z-index: 2; }
   .shot img {
@@ -605,19 +521,8 @@
     height: 100%;
     object-fit: cover;
   }
-  /* a card marked pad:true keeps its full picture visible with a margin of black round it, instead of filling the frame edge to edge */
   .shot.padded img { padding: 7%; box-sizing: border-box; object-fit: contain; background: #000; }
   .shot.padded.pad-white img { background: #fff; }
-  /* a slow tour around the four logos: top-left, top-right, bottom-right, bottom-left */
-  .shot.logo-zoom img { animation: logo-tour 16s ease-in-out infinite; }
-  @keyframes logo-tour {
-    0%, 6%    { transform: scale(1);   transform-origin: 50% 50%; }
-    12%, 21%  { transform: scale(1.3); transform-origin: 25% 30%; }
-    27%, 36%  { transform: scale(1.3); transform-origin: 75% 30%; }
-    42%, 51%  { transform: scale(1.3); transform-origin: 75% 70%; }
-    57%, 66%  { transform: scale(1.3); transform-origin: 25% 70%; }
-    75%, 100% { transform: scale(1);   transform-origin: 50% 50%; }
-  }
   #gallery.padded .gslide img { padding: 7%; box-sizing: border-box; background: #000; }
   #gallery.padded.white .gslide img { background: #fff; }
 
@@ -653,7 +558,6 @@
     opacity: calc(.2 + .6 * var(--t, 0));
     transition: opacity .25s ease-out, height .35s ease;
   }
-  /* When a card opens it grows, so its stem shortens to keep the card on screen */
   .item.open .stem { --t: 1; }
   .stem::after {
     content: "";
@@ -666,7 +570,6 @@
   }
   .item.above .stem::after { bottom: -3px; }
   .item.below .stem::after { top: -3px; }
-  /* the card you're on: its dot grows to the size of the start and "now" dots and pulses like them */
   .item.active .stem { opacity: 1; }
   .item.active .stem::after { left: -4px; width: 9px; height: 9px; animation: pulse 2.4s ease-out infinite; }
   .item.active.above .stem::after { bottom: -4.5px; }
@@ -676,7 +579,6 @@
     .item:not(.end):hover .card, .item:not(.end):hover .stem { --t: 1; }
   }
 
-  /* "Back to the start": the same grey, size and arrow as the "Scroll and click" line at the beginning, pointing left */
   .back-wrap { margin-top: 20px; }
   .back-start {
     display: inline-flex; flex-direction: column; align-items: center; gap: 8px;
@@ -688,45 +590,9 @@
   .back-start:focus-visible { outline: 1px solid #fff; outline-offset: 6px; }
   .back-start svg { width: 26px; height: 14px; animation: nudge-left 1.6s ease-in-out infinite; }
 
-  /* A short stack of text links above the photo at the very end */
-  .end-links {
-    margin-bottom: 14px;
-    display: flex; flex-direction: column; align-items: center; gap: 7px;
-  }
-  .end-links a, .end-links button {
-    padding: 0;
-    background: none; border: 0; color: #fff;
-    font: inherit; font-size: 13px;
-    text-decoration: underline; text-decoration-color: rgba(255, 255, 255, .45); text-underline-offset: 3px;
-    cursor: pointer; opacity: .9; transition: opacity .2s ease;
-  }
-  .end-links a:hover, .end-links button:hover { opacity: .65; }
-  .end-links a:focus-visible, .end-links button:focus-visible { outline: 1px solid #fff; outline-offset: 4px; }
-  @media (max-height: 720px) {                 /* short screens: a tighter stack so it clears the name at the top */
-    .end-links { margin-bottom: 6px; gap: 3px; }
-    .end-links a, .end-links button { font-size: 11px; }
-  }
-  @media (max-height: 620px) {
-    .end-links { margin-bottom: 2px; gap: 2px; }
-  }
-
-  /* The skills panel: text only, one centred column */
-  .panel[hidden] { display: none; }
-  .panel-skills { width: min(440px, 92vw); height: auto; max-height: min(calc(100vh - 96px), 900px); max-height: min(calc(100dvh - 96px), 900px); }
-  .skills-body { padding: 64px 28px 56px; text-align: center; }
-  .skills-body .panel-title { margin-top: 0; }
-  .skills-list { list-style: none; margin-top: 30px; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
-  @media (max-width: 640px) { .panel-skills { width: 100%; height: 100vh; height: 100dvh; max-height: none; } .skills-body { padding-top: 84px; } }
-
-  /* ---------- Motion ---------- */
-
   @keyframes fade    { from { opacity: 0; } }
   @keyframes draw    { from { transform: scaleX(0); } }
   @keyframes dot-in  { from { transform: scale(0); } }
-  @keyframes burst {
-    from { width: 9px;  height: 9px;  opacity: .9; }
-    to   { width: 520px; height: 520px; opacity: 0; }
-  }
   @keyframes pulse {
     0%       { box-shadow: 0 0 0 0 rgba(255,255,255,.55); }
     70%,100% { box-shadow: 0 0 0 16px rgba(255,255,255,0); }
@@ -742,14 +608,11 @@
     50%      { transform: translateX(7px); }
   }
 
-
-  /* ---------- Final photo of me: click to grow 20px, click again to shrink ---------- */
   .item.end { transition: width .35s cubic-bezier(.2, .8, .2, 1); }
   .item.end.grown { --wx: 20px; }
   .item.end .card, .item.end .shot { cursor: pointer; }
   .item.end .shot:focus-visible { outline: 1px solid #fff; outline-offset: 4px; border-radius: 50%; }
 
-  /* ---------- Availability line + rotating words ---------- */
   .beat .avail { margin-top: 6px; font-size: 14px; font-weight: 500; opacity: 1; color: #fff; display: flex; justify-content: center; align-items: center; gap: .4em; }
   .beat .avail .avail-lbl { opacity: .72; }
   .beat .avail-on { display: inline-flex; align-items: center; gap: 8px; color: #39ff14; font-weight: 600; text-shadow: 0 0 12px rgba(57, 255, 20, .55); }
@@ -757,21 +620,18 @@
 
   .rot { margin-top: 16px; min-height: 2.5em; display: grid; align-items: center; justify-items: center; font-size: 18px; line-height: 1.2; font-weight: 600; letter-spacing: -0.01em; color: #fff; text-wrap: balance; }
   .rot .w { grid-area: 1 / 1; opacity: 0; will-change: opacity, transform, filter; }
-  .rot .w.in { opacity: 1; }                                                                       /* words simply change, no fade */
+  .rot .w.in { opacity: 1; }
   .beat .links { margin-top: 22px; }
   @media (max-height: 640px) { .rot { font-size: 15px; margin-top: 10px; } .beat .links { margin-top: 12px; } }
 
-  /* ---------- Cards with a slideshow that also drifts in (SYMBIOSIS) ---------- */
   .shot.zoomy img.slide.on, .shot.zoomy img.slide.under { animation: slide-zoom 3.6s ease-out both; }
   @keyframes slide-zoom { from { transform: scale(1); } to { transform: scale(1.09); } }
 
-
-  /* Modal: the left / right arrows sit in the same row as the year line, so the gap under the picture is the same with or without a gallery */
   .g-nav { height: 0; padding: 0 22px; position: relative; z-index: 2; align-items: flex-start; }
   .g-nav .g-arrow { margin-top: 5px; }
   .panel-body { padding-top: 22px; }
   @media (max-width: 640px) { .g-nav { padding: 0 14px; } }
-  .panel-caption { height: 0; padding: 0 12px; position: relative; z-index: 1; line-height: 1; transform: translateY(-22px); color: rgba(255,255,255,.85); text-shadow: 0 0 4px #000, 0 0 8px rgba(0,0,0,.8); pointer-events: none; }   /* caption sits on the picture's bottom-right corner, so it adds no gap */
+  .panel-caption { height: 0; padding: 0 12px; position: relative; z-index: 1; line-height: 1; transform: translateY(-22px); color: rgba(255,255,255,.85); text-shadow: 0 0 4px #000, 0 0 8px rgba(0,0,0,.8); pointer-events: none; }
 
   @media (prefers-reduced-motion: reduce) {
     .crt-noise { display: none; }
@@ -791,9 +651,6 @@
 
     <div class="line" id="line"></div>
 
-    <!-- The beginning -->
-    <span class="ring"></span>
-    <span class="ring second"></span>
     <div class="dot start" aria-hidden="true"></div>
 
     <section class="beat begin">
@@ -809,20 +666,7 @@
 
     <ol class="items" id="items"></ol>
 
-    <!-- Now -->
     <div class="dot now" aria-hidden="true"></div>
-    <!-- SKILLS (taken off the page for now; uncomment this block to bring them back)
-    <div class="skills">
-      <ul>
-        <li>Figma</li><li>User flows</li><li>Prototyping</li><li>Wire-framing</li>
-        <li>Dashboard design</li><li>Responsive design</li><li>Mobile and web apps</li>
-      </ul>
-      <ul>
-        <li>Teamwork</li><li>Working with devs</li><li>Remote collaboration</li>
-        <li>Shipping digital products</li><li>Managing multiple projects</li>
-      </ul>
-    </div>
-    -->
     <section class="beat current">
       <p class="year today-date" id="todayDate"></p>
       <p class="avail"><span class="avail-lbl">Currently:</span> <span class="avail-on">Available<i class="avail-dot" aria-hidden="true"></i></span></p>
@@ -871,25 +715,10 @@
     </div>
   </article>
 
-  <article class="panel panel-skills" id="skillsPanel" role="dialog" aria-modal="true" aria-labelledby="skillsTitle" tabindex="-1" hidden>
-    <button type="button" class="close-btn" id="skillsClose" aria-label="Close">
-      <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M1.5 1.5l9 9M10.5 1.5l-9 9"/></svg>
-    </button>
-    <div class="skills-body">
-      <h2 class="panel-title" id="skillsTitle">My Skills</h2>
-      <ul class="skills-list" id="skillsList"></ul>
-    </div>
-  </article>
 </div>
 
 <script>
 (() => {
-  // ------------------------------------------------------------
-  // Projects, oldest first, from John's CV and 2026 one-pager.
-  //   (cards alternate above and below the line automatically)
-  //   dx:   rough distance from the previous card (px)
-  //   desc: the short description that opens when a card is clicked
-  // ------------------------------------------------------------
   const BOOKS = [
     "content/books-1.jpg",
     "content/books-2.jpg",
@@ -899,76 +728,36 @@
     "content/books-6.jpg"
   ];
 
-  // Turns an embedded data: address into a blob: address, which videos loop and seek properly.
-  function blobUrl(dataUrl) {
-    if (dataUrl.slice(0, 5) !== 'data:') return dataUrl;                  // a file path: use it as it is
-    const comma = dataUrl.indexOf(','), mime = dataUrl.slice(5, dataUrl.indexOf(';'));
-    const bin = atob(dataUrl.slice(comma + 1)), bytes = new Uint8Array(bin.length);
-    for (let k = 0; k < bin.length; k++) bytes[k] = bin.charCodeAt(k);
-    return URL.createObjectURL(new Blob([bytes], { type: mime }));
-  }
-  const blobCache = {};
-  function useAnimatedImage(v) {
-    if (!v.isConnected || !ANIM[v.dataset.vid] || reduce) return;                 // (people who prefer less motion keep the still frame)
+  const VIDEOS  = { urban: "content/urban-video-1.mp4", digitus: "content/digitus-video-1.mp4" };
+  const POSTERS = { urban: "content/urban-poster-1.jpg", digitus: "content/digitus-poster-1.jpg" };
+
+  function useStill(v) {
+    if (!v.isConnected || reduce) return;
     const img = new Image();
     img.className = v.className; img.alt = ''; img.draggable = false; img.decoding = 'async';
     img.setAttribute('aria-hidden', 'true');
-    img.src = ANIM[v.dataset.vid];
+    img.src = POSTERS[v.dataset.vid];
     v.replaceWith(img);
   }
   function attachVideo(v, key) {
-    const list = VIDEOS[key], tries = [];
-    const add = (i) => {
-      tries.push(() => blobCache[key + i] || (blobCache[key + i] = blobUrl(list[i].data)));   // blob: first
-      tries.push(() => list[i].data);                                                        // then data: (some previews only allow that)
-    };
-    list.forEach((src, i) => { if (v.canPlayType(src.type)) add(i); });                     // formats this browser says it can play
-    if (!tries.length) list.forEach((src, i) => add(i));                                     // not sure? try them all
-    let n = 0, timer = 0;
     v.dataset.vid = key;
-    const next = () => {
-      clearTimeout(timer);
-      if (n >= tries.length) { useAnimatedImage(v); return; }                                // nothing loaded: show the animated picture
-      v.src = tries[n++]();
-      timer = setTimeout(() => { if (v.readyState < 2) next(); }, 3500);                     // stuck? move on
-    };
     v.muted = true; v.defaultMuted = true; v.playsInline = true;
-    v.addEventListener('error', next);
-    v.addEventListener('loadeddata', () => clearTimeout(timer));
-    // Some browsers ignore the loop attribute on embedded videos and just stop at the end: restart it by hand
+    v.addEventListener('error', () => useStill(v));
     v.addEventListener('ended', () => {
       const play = () => { const pr = v.play(); if (pr && pr.catch) pr.catch(() => {}); };
       try { v.currentTime = 0; } catch (e) {}
       play();
-      setTimeout(() => {                                                                     // still stuck on the last frame? reload it
+      setTimeout(() => {
         if (v.ended || (v.paused && v.duration && v.currentTime >= v.duration - 0.2)) { v.src = v.currentSrc || v.src; play(); }
       }, 700);
     });
-    next();
+    v.src = VIDEOS[key];
   }
 
-  // Card videos (Urban Ice Tribe about 0.8MB, Digitus about 0.15MB; both silent). If the browser or preview pane won't play it, attachVideo()
-  // swaps in ANIM: the same video as an animated picture (about 1.1MB), which every browser can show.
-  const VIDEOS = {
-    urban: [
-      { type: 'video/mp4; codecs="avc1.64001E"', data: "content/urban-video-1.mp4" }
-    ],
-    digitus: [
-      { type: 'video/mp4; codecs="avc1.64001E"', data: "content/digitus-video-1.mp4" }
-    ]
-  };
-  // If a video will not play, the still first frame (the poster) is shown instead.
-  const DIGITUS_POSTER = "content/digitus-poster-1.jpg";
-  const URBAN_POSTER = "content/urban-poster-1.jpg";
-  const ANIM = { digitus: DIGITUS_POSTER, urban: URBAN_POSTER };
-
-  // Photo of John, used on the start card and the end card. Replace this one line to update both.
   const ME = "content/me-1.jpg";
 
-  // Up-to-date photo of John for the end card (shown uncropped).
   const ME_NOW = "content/me-now-1.jpg";
 
-  // MISSPAP pictures: they fade through on the card, and are the slides in the read-more gallery.
   const MISSPAP_IMGS = [
     "content/misspap-imgs-1.jpg",
     "content/misspap-imgs-2.jpg",
@@ -978,10 +767,8 @@
     "content/misspap-imgs-6.jpg"
   ];
 
-  // Longer write-up shown when the "+" on a flipped card is pressed (from John's CV).
   const MISSPAP_MORE = {
     tags: ["Creative Management", "Videography", "Photography", "Email Marketing"],
-    credit: "All Images © Copyright John Latham Photography",
     html: true,
     paras: [
       "After working exclusively within agencies, I moved in-house at MISSPAP for the first time, taking on a broader creative role within a single fashion brand.",
@@ -995,9 +782,6 @@
     ]
   };
 
-  // Read-more write-ups, keyed by card title. Each: role line + short paragraphs (+ optional links / credit).
-  const PHOTO_CREDIT = "All Images © Copyright John Latham Photography";
-  // Extra photos shown only inside the Commercial Photography panel (the card keeps its own picture).
   const COMM_EXTRA = [
     "content/comm-extra-1.jpg",
     "content/comm-extra-2.jpg",
@@ -1021,7 +805,6 @@
         "Working in an agency environment gave me an early understanding of <b>professional client work, deadlines and commercial design</b>. Although most of the work was created for clients and therefore didn't become part of my personal portfolio, the experience shaped the way I approached design throughout my career.",
         "After leaving to pursue photography, I continued working with Loaf as a freelancer, including photo and video projects when the company expanded into larger offices in Manchester's Ancoats."
       ],
-      credit: "Image © Copyright John Latham",
       links: [ { label: "loaf.agency", href: "https://loaf.agency" } ]
     },
     "Design Agencies": {
@@ -1033,7 +816,6 @@
         "At <a href=\"http://www.bollandlowe.co.uk\" target=\"_blank\" rel=\"noopener\"><b><u>Bolland &amp; Lowe</u></b></a>, I worked as a <b>senior graphic designer, photographer and videographer</b>, producing brochures, posters and digital assets for <a href=\"https://www.everymanplayhouse.com\" target=\"_blank\" rel=\"noopener\"><b><u>Everyman and Playhouse</u></b></a> theatres.",
         "Working across different agencies and large client accounts strengthened my ability to <b>adapt quickly, manage expectations and deliver work across multiple formats and industries</b>."
       ],
-      credit: PHOTO_CREDIT,
       links: [ { label: "ICG Brand Builders", href: "https://www.icg.agency" }, { label: "Bolland & Lowe", href: "http://www.bollandlowe.co.uk" } ]
     },
     "Commercial Photography": {
@@ -1047,7 +829,6 @@
         "I also photographed weddings throughout this period, including destination weddings in <b>Rhodes, Sorrento and Bordeaux</b>, and became a member of <a href=\"https://www.fearlessphotographers.com\" target=\"_blank\" rel=\"noopener\"><b><u>Fearless Photographers</u></b></a>.",
         "Working independently gave me valuable experience beyond photography, including <b>setting rates, managing contracts, winning clients and running my own business</b>."
       ],
-      credit: PHOTO_CREDIT,
       links: [ { label: "Photography Portfolio", href: "https://mrjohnlatham.com" } ]
     },
     "Digitus.Agency": {
@@ -1144,8 +925,6 @@
 
   const AGENCIES_IMG = "content/agencies-img-1.jpg";
 
-  // SYMBIOSIS product photos: SYMB_GALLERY is the full square shot (used in the modal),
-  // SYMB_STRIP is the same photos trimmed tighter so they sit close together in the card filmstrip.
   const SYMB_GALLERY = [
     "content/symb-gallery-1.jpg",
     "content/symb-gallery-2.jpg",
@@ -1165,9 +944,7 @@
     "content/symb-gallery-16.jpg",
     "content/symb-gallery-17.jpg"
   ];
-  // SYMB_CARD_IMGS: the product-only shots for the card face slideshow (skips the big box shot,
-  // which stays as the first image the gallery opens on in the modal).
-  const SYMB_CARD_IMGS = [ SYMB_GALLERY[0], SYMB_GALLERY[1], SYMB_GALLERY[3], SYMB_GALLERY[10], SYMB_GALLERY[14], SYMB_GALLERY[4], SYMB_GALLERY[12] ]; // animated card slideshow: Shilajit box, 3 round jars, then Black Gold, Anti-Parasite, Brain Focus bottles
+  const SYMB_CARD_IMGS = [ SYMB_GALLERY[0], SYMB_GALLERY[1], SYMB_GALLERY[3], SYMB_GALLERY[10], SYMB_GALLERY[14], SYMB_GALLERY[4], SYMB_GALLERY[12] ];
 
   function ordinal(n) {
     const s = ["th", "st", "nd", "rd"], v = n % 100;
@@ -1181,7 +958,6 @@
   document.getElementById('todayDate').textContent = TODAY_STR;
 
   const projects = [
-    // The start card. To add the picture, put  img: "..."  in this entry.
     { start: true, year: "1997", title: "Where it all started", gap: 46, grow: 10, img: ME, crt: true, },
     { year: "2009", kind: "Full Time Employment", title: "Loaf Creative", dx: 0, img: "content/loaf-creative-1.jpg",
       desc: "My first step into professional design, developing from apprentice to full-time agency designer." },
@@ -1191,7 +967,7 @@
       desc: "My first in-house role, expanding from advertising and photography into email marketing and team management." },
     { year: "2017", kind: "Freelance", title: "Commercial Photography", dx: 150, img: "content/commercial-photography-1.jpg", ratio: "1000 / 709", stem: 46,
       desc: "A move into full-time photography covering music, sport, lifestyle, brands, commercial work and weddings." },
-    { year: "2019", kind: "Full Time Employment", title: "Digitus.Agency", dx: 200, video: 'digitus', poster: DIGITUS_POSTER, frame: true,
+    { year: "2019", kind: "Full Time Employment", title: "Digitus.Agency", dx: 200, video: 'digitus', poster: POSTERS.digitus, frame: true,
       desc: "Returning to design through UI/UX, digital products, software interfaces and Facebook advertising." },
     { year: "2020", kind: "Own Business", title: "Audible Book Publishing", dx: 170, eq: true, img: "content/audible-book-publishing-1.jpg", ratio: "1200 / 720", panelRatio: "1200 / 720",
       desc: "Turning a decade of wedding photography experience into a published audiobook on Amazon Audible." },
@@ -1201,15 +977,13 @@
       desc: "Returning to UI design to transform a social media platform from basic interface to polished digital product." },
     { year: "2024", kind: "Freelance", title: "SYMBIOSIS", dx: 180, imgs: SYMB_GALLERY, cardImgs: SYMB_CARD_IMGS, ratio: "3 / 2", panelRatio: "3 / 2", pad: true, galleryWhite: true, zoom: true,
       desc: "A long-standing client relationship that grew from packaging design into e-commerce and digital product development." },
-    { year: "2025", kind: "Freelance", title: "Audio UI Design", dx: 210, scroll: true, grow: 10, pos: "center top", img: "content/audio-ui-design-1.jpg",
+    { year: "2025", kind: "Freelance", title: "Audio UI Design", dx: 210, scroll: true, grow: 10, img: "content/audio-ui-design-1.jpg",
       desc: "Combining my UI design background with my passion for music to enter the audio software industry." },
-    { year: "2025", kind: "Full Time Employment", title: "Urban Ice Tribe", dx: 170, video: 'urban', poster: URBAN_POSTER,
+    { year: "2025", kind: "Full Time Employment", title: "Urban Ice Tribe", dx: 170, video: 'urban', poster: POSTERS.urban,
       desc: "Bringing design, e-commerce, photography and marketing together in a full-time Brand and Marketing Manager role." },
-    // The end card, above the "today" dot. Same treatment as the start card.
     { end: true, year: TODAY_STR, title: "Today", gap: 52, img: ME_NOW, ratio: "1000 / 1000", scale: 0.57, }
   ];
   projects.forEach(p => { if (!p.more && MORE[p.title]) p.more = MORE[p.title]; });
-
 
   const scroller = document.getElementById('scroller');
   const track    = document.getElementById('track');
@@ -1217,30 +991,27 @@
   const list     = document.getElementById('items');
   const reduce   = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // ---------- Layout: x is measured from the start point ----------
-  const SPREAD = 1.5;                            // bigger number = cards further apart
-  const SCROLL_SPEED = 20;                      // scrolling image: pixels per second (lower = slower)
-  const TIGHTEN = 20;                           // px taken off the gap between each pair of cards
+  const SPREAD = 1.5;
+  const SCROLL_SPEED = 20;
+  const TIGHTEN = 20;
   const START = 330, MIN_SAME_SIDE = 380, END_GAP = 330;
-  // Stem length for each card in turn (px at an 800px-tall screen; scales with screen height).
-  // Cards alternate above/below, so each row gets its own mix of long and short stems.
   const GAPS  = [84, 40, 34, 88, 66, 56, 90, 26, 44, 78, 82, 70];
   const last  = { above: -Infinity, below: -Infinity };
   let x = START;
 
-  let n = 0;                                                // timeline cards only; the start card doesn't count
+  let n = 0;
   projects.forEach(p => {
-    if (p.end) return;                                       // placed on the "now" dot below
-    if (p.start) { p.side = "above"; p.x = 0; return; }     // sits on the start dot, a little lower than the rest
-    p.side = n % 2 === 0 ? "above" : "below";               // strict alternation
+    if (p.end) return;
+    if (p.start) { p.side = "above"; p.x = 0; return; }
+    p.side = n % 2 === 0 ? "above" : "below";
     const want = n === 0 ? START : x + p.dx * SPREAD - TIGHTEN;
-    p.x   = Math.max(want, last[p.side] + MIN_SAME_SIDE);   // never overlap on the same side
-    p.gap = p.stem != null ? p.stem : GAPS[n % GAPS.length];      // a card can set its own stem length
+    p.x   = Math.max(want, last[p.side] + MIN_SAME_SIDE);
+    p.gap = p.stem != null ? p.stem : GAPS[n % GAPS.length];
     last[p.side] = p.x;
     x = p.x;
     n++;
   });
-  const endX = x + END_GAP;                       // where "now" sits
+  const endX = x + END_GAP;
   projects.forEach(p => { if (p.end) { p.side = "above"; p.x = endX; } });
 
   track.style.width = `calc(100vw + ${endX}px)`;
@@ -1254,13 +1025,9 @@
     li.style.setProperty('--i', i);
     li.style.setProperty('--gap', p.start || p.end ? p.gap + 'px' : (p.gap / 8) + 'vh');
     if (p.scale) li.style.setProperty('--ws', p.scale);
-    if (p.grow) li.style.setProperty('--wx', p.grow + 'px');       // extra width in px
+    if (p.grow) li.style.setProperty('--wx', p.grow + 'px');
     let shotContent = '';
-    if (p.scrollX && p.imgs) {
-      const seq = (p.strip || p.imgs).concat(p.strip || p.imgs);                       // the run repeated once, so it can loop with no seam
-      shotContent = '<div class="scrollwinX"><div class="htrack">' +
-        seq.map((u, k) => '<img src="' + u + '" alt="' + (k === 0 ? p.title : '') + '">').join('') + '</div></div>';
-    } else if (p.imgs) {
+    if (p.imgs) {
       p.cur = 0;
       const faceImgs = p.cardImgs || p.imgs;
       shotContent = faceImgs.map((u, k) =>
@@ -1270,11 +1037,11 @@
     } else if (p.scroll && p.img) {
       shotContent = '<div class="scrollwin"><div class="vtrack"><img src="' + p.img + '" alt="' + p.title + '"><img src="' + p.img + '" alt=""></div></div>';
     } else if (p.img) {
-      shotContent = '<img src="' + p.img + '" alt="' + p.title + '"' + (p.pos ? ' style="object-position:' + p.pos + '"' : '') + '>';
+      shotContent = '<img src="' + p.img + '" alt="' + p.title + '"' + '>';
     }
     li.innerHTML =
       '<article class="card">' +
-        '<div class="shot' + (p.pad ? ' padded' : '') + (p.pad && p.galleryWhite ? ' pad-white' : '') + (p.snap ? ' snap' : '') + (p.zoom ? ' zoomy' : '') + (p.logoZoom ? ' logo-zoom' : '') + '"' + (p.ratio ? ' style="aspect-ratio:' + p.ratio + '"' : '') + '>' +
+        '<div class="shot' + (p.pad ? ' padded' : '') + (p.pad && p.galleryWhite ? ' pad-white' : '') + (p.snap ? ' snap' : '') + (p.zoom ? ' zoomy' : '') + '"' + (p.ratio ? ' style="aspect-ratio:' + p.ratio + '"' : '') + '>' +
           '<div class="flipper">' +
             '<div class="face front" aria-hidden="true">' + shotContent + (p.crt ? '<canvas class="crt-noise" width="120" height="120" aria-hidden="true"></canvas>' : '') + (p.eq ? '<div class="eq-bars"><i></i><i></i><i></i><i></i></div>' : '') + '</div>' +
             ((p.start || p.end) ? '' : '<div class="face back">' + ((p.imgs || p.video || (p.scroll && p.img)) ? '<div class="mirror" aria-hidden="true">' + shotContent + '</div>' : '') + '<p>' + p.desc + '</p>' + (p.more ? '<button type="button" class="more-btn" tabindex="-1" aria-label="Read more: ' + p.title + '"><span class="rm">See More</span><span class="plus"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M5 1v8M1 5h8"/></svg></span></button>' : '') + '</div>') +
@@ -1287,21 +1054,10 @@
       '</article>' +
       '<div class="stem" aria-hidden="true"></div>';
     list.appendChild(li);
-    if (p.scrollX && p.imgs) {
-      const track = li.querySelector('.htrack');
-      const imgsEl = [...track.querySelectorAll('img')];
-      let left = imgsEl.length;
-      const settle = () => {
-        if (--left > 0) return;                                // wait for every picture to report its size
-        const secs = Math.max(20, (track.scrollWidth / 2) / SCROLL_SPEED);
-        track.style.setProperty('--durx', secs + 's');
-      };
-      imgsEl.forEach(im => { im.complete ? settle() : im.addEventListener('load', settle, { once: true }); });
-    }
     if (p.scroll && p.img) {
       const probe = new Image();
       probe.onload = () => {
-        const secs = Math.max(20, (probe.naturalHeight / probe.naturalWidth) * 230 / (SCROLL_SPEED * 0.8));   // vertical scroll (Audio UI Design): 20% slower
+        const secs = Math.max(20, (probe.naturalHeight / probe.naturalWidth) * 230 / (SCROLL_SPEED * 0.8));
         li.querySelectorAll('.vtrack').forEach(t => t.style.setProperty('--dur', secs + 's'));
       };
       probe.src = p.img;
@@ -1309,42 +1065,37 @@
     return li;
   });
 
-  // ---------- Highlight whatever is near the centre of the screen ----------
   let paintQueued = false;
   function queuePaint() {
     if (!paintQueued) { paintQueued = true; requestAnimationFrame(paint); }
   }
   const startDot = document.querySelector('.dot.start');
   const nowDot = document.querySelector('.dot.now');
-  let introDone = false;                                    // the start dot waits for the opening burst to finish
-  setTimeout(() => { introDone = true; queuePaint(); }, 1800);
 
   function paint() {
     paintQueued = false;
     const sl = scroller.scrollLeft;
     const radius = Math.max(240, innerWidth * 0.26);
-    // the stop (start photo, a card, or "now") closest to the middle of the screen
     let nearest = 0, best = Infinity;
     for (let i = 0; i < projects.length; i++) {
       const d = Math.abs(projects[i].x - sl);
       if (d < best) { best = d; nearest = i; }
     }
     const at = projects[nearest];
-    startDot.classList.toggle('pulse', !!at.start && introDone);
+    startDot.classList.toggle('pulse', !!at.start);
     nowDot.classList.toggle('pulse', !!at.end);
     for (let i = 0; i < nodes.length; i++) {
       let t = 1 - Math.abs(projects[i].x - sl) / radius;
       t = t < 0 ? 0 : t > 1 ? 1 : t;
-      t = t * t * (3 - 2 * t);                    // smoothstep
+      t = t * t * (3 - 2 * t);
       nodes[i].style.setProperty('--t', t.toFixed(3));
       nodes[i].classList.toggle('active', i === nearest && !projects[i].start && !projects[i].end);
     }
     document.body.classList.toggle('scrolled', sl > 40);
   }
 
-  // ---------- Smooth horizontal scrolling ----------
   let target = 0, current = 0, raf = null;
-  let centring = false;                           // true while a clicked card is sliding to the centre
+  let centring = false;
   const maxScroll = () => Math.max(0, scroller.scrollWidth - scroller.clientWidth);
   const clamp = v => Math.min(maxScroll(), Math.max(0, v));
 
@@ -1361,7 +1112,7 @@
     scroller.scrollLeft = current;
     raf = requestAnimationFrame(tick);
   }
-  let easeK = 0.14;                               // how quickly scrolling catches up (higher = faster)
+  let easeK = 0.14;
   function run(e = 0.14) {
     easeK = e;
     if (!raf) { current = scroller.scrollLeft; raf = requestAnimationFrame(tick); }
@@ -1373,7 +1124,6 @@
     run();
   }
 
-  // Arrow keys: jump to the next / previous card (or the start / "now") and centre it
   const stops = projects.map(p => p.x).concat(endX);
   function snapStep(dir) {
     const at = raf ? target : scroller.scrollLeft;
@@ -1382,19 +1132,17 @@
     if (t === undefined) return;
     centring = false;
     target = clamp(t);
-    run(0.26);                                    // arrow keys flick quickly
+    run(0.26);
   }
 
-  // Keep our state in sync when the browser scrolls (touch swipe, trackpad sideways)
   scroller.addEventListener('scroll', () => {
     if (!raf) current = target = scroller.scrollLeft;
     queuePaint();
   }, { passive: true });
 
-  // Mouse wheel / vertical trackpad scroll moves the timeline sideways
   window.addEventListener('wheel', e => {
-    if (modalOpen || e.ctrlKey) return;                                  // let pinch-zoom through
-    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;    // native sideways scroll
+    if (modalOpen || e.ctrlKey) return;
+    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
     e.preventDefault();
     let d = e.deltaY;
     if (e.deltaMode === 1) d *= 32;
@@ -1402,12 +1150,9 @@
     nudge(d * 1.1);
   }, { passive: false });
 
-  scroller.addEventListener('dragstart', e => e.preventDefault());   // belt and braces for Firefox
+  scroller.addEventListener('dragstart', e => e.preventDefault());
   list.querySelectorAll('img, video').forEach(el => { el.draggable = false; });
 
-  // ---------- Click and drag (mouse only; touch uses native swiping) ----------
-  // Dragging only starts after a few pixels of movement, so a plain click still
-  // reaches the card underneath.
   let pressed = false, dragging = false, suppressClick = false;
   let startX = 0, startSL = 0, lastX = 0, lastT = 0, vel = 0;
 
@@ -1449,7 +1194,7 @@
     scroller.classList.remove('dragging');
     suppressClick = true;
     setTimeout(() => { suppressClick = false; }, 60);
-    if (performance.now() - lastT > 80) vel = 0;            // paused before letting go: no glide
+    if (performance.now() - lastT > 80) vel = 0;
     current = scroller.scrollLeft;
     target = clamp(current - vel * 320);
     run();
@@ -1457,7 +1202,6 @@
   scroller.addEventListener('pointerup', release);
   scroller.addEventListener('pointercancel', release);
 
-  // ---------- Open / close a card ----------
   let openIdx = -1;
   function setOpen(i) {
     nodes.forEach((n, k) => {
@@ -1465,11 +1209,10 @@
       n.classList.toggle('open', on);
       const mb = n.querySelector('.more-btn'); if (mb) mb.tabIndex = on ? 0 : -1;
       if (on) { const fv = n.querySelector('.face.front video'), bv = n.querySelector('.face.back video'); if (fv && bv) { try { bv.currentTime = fv.currentTime; } catch (e) {} } }
-      if (on && !(projects[k].imgs || projects[k].scroll)) { // back of the card = the same picture, dimmed
+      if (on && !(projects[k].imgs || projects[k].scroll)) {
         const pr = projects[k], u = pr.img || '';
         const back = nodes[k].querySelector('.face.back');
         back.style.backgroundImage = u ? `url('${u}')` : '';
-        back.style.backgroundPosition = pr.pos || '';
       }
       n.querySelector('.title-btn').setAttribute('aria-expanded', on ? 'true' : 'false');
     });
@@ -1477,17 +1220,15 @@
   }
   const isCentred = i => Math.abs((raf ? target : scroller.scrollLeft) - projects[i].x) < 40;
   function goTo(i) { centring = true; target = clamp(projects[i].x); run(); }
-  const FLIP_DELAY = 2000;                                  // ms a card must sit in the middle before it flips by itself
-  const CLICK_FLIP_DELAY = 550;                             // ms from clicking a card that isn't in the middle yet to it flipping (about the time it takes to slide there)
+  const FLIP_DELAY = 2000;
+  const CLICK_FLIP_DELAY = 550;
   let pendingIdx = -1, pendingTimer = 0;
   function cancelPending() { clearTimeout(pendingTimer); pendingIdx = -1; }
   function flipDown() { if (openIdx !== -1) autoOff.add(openIdx); setOpen(-1); }
   function flipUp(idx) { setOpen(idx); }
 
-  // Any timeline card that sits in the centre for two seconds flips by itself.
-  // (Not the start / end photos.)
   const AUTO = projects.map(p => !(p.start || p.end));
-  const autoOff = new Set();                                // flipped down by hand: stay down until it has left the centre
+  const autoOff = new Set();
   let dwellIdx = -1, dwellTimer = 0;
   function cancelDwell() { clearTimeout(dwellTimer); dwellIdx = -1; }
   function checkDwell() {
@@ -1511,28 +1252,26 @@
     if (suppressClick) return;
     const plus = e.target.closest('.more-btn');
     if (plus) { openModal(nodes.indexOf(plus.closest('.item')), plus); return; }
-    const skl = e.target.closest('.skills-link');
-    if (skl) { openSkills(skl); return; }
     const li = e.target.closest('.item');
-    if (!li) { cancelPending(); flipDown(); return; }         // click empty space: everything turns back
+    if (!li) { cancelPending(); flipDown(); return; }
     const idx = nodes.indexOf(li);
-    if (projects[idx].start || projects[idx].end) {           // the start and end photos of me don't flip
+    if (projects[idx].start || projects[idx].end) {
       if (!e.target.closest('.shot')) return;
       cancelPending(); cancelDwell();
-      if (!isCentred(idx)) { flipDown(); goTo(idx); return; }   // not in the middle yet: a click brings it there
-      if (projects[idx].end) li.classList.toggle('grown');    // in the middle: the end photo grows 20px, click again to shrink
+      if (!isCentred(idx)) { flipDown(); goTo(idx); return; }
+      if (projects[idx].end) li.classList.toggle('grown');
       return;
     }
     cancelDwell();
-    if (openIdx === idx) {                                    // showing the description: flip back down and stay down
+    if (openIdx === idx) {
       flipDown();
-    } else if (pendingIdx === idx) {                          // already waiting to flip: don't make them wait
+    } else if (pendingIdx === idx) {
       cancelPending(); flipUp(idx);
-    } else {                                                  // bring it to the centre, then flip after two seconds
+    } else {
       cancelPending(); flipDown();
-      if (isCentred(idx)) {                                   // already in the middle: flip straight away
+      if (isCentred(idx)) {
         flipUp(idx);
-      } else {                                                // slide it to the middle, and flip as it arrives
+      } else {
         goTo(idx);
         pendingIdx = idx;
         pendingTimer = setTimeout(() => { pendingIdx = -1; flipUp(idx); }, CLICK_FLIP_DELAY);
@@ -1540,9 +1279,8 @@
     }
   });
 
-  // Scrolling away from a waiting or flipped card cancels / turns it back over
   scroller.addEventListener('scroll', () => {
-    if (centring) return;                                   // that's us sliding the card to the centre
+    if (centring) return;
     const idx = openIdx !== -1 ? openIdx : pendingIdx;
     if (idx !== -1 && Math.abs(scroller.scrollLeft - projects[idx].x) > 40) {
       cancelPending(); flipDown();
@@ -1551,7 +1289,6 @@
   scroller.addEventListener('scroll', checkDwell, { passive: true });
   scroller.addEventListener('pointerdown', () => { centring = false; });
 
-  // ---------- Read-more panel ----------
   const modal = document.getElementById('modal');
   const panel = document.getElementById('panel');
   const modalClose = document.getElementById('modalClose');
@@ -1561,30 +1298,29 @@
     const p = projects[idx], m = p && p.more;
     if (!m) return;
     cancelDwell(); cancelPending();
-    showPanel(panel);                                         // (must be showing to measure the picture frame)
     const pics = (p.imgs ? p.imgs.slice() : [p.img].concat(m.extra || [])).filter(Boolean);
     gallery.textContent = '';
     gallery.classList.toggle('wide', !!p.video);
     gallery.classList.toggle('padded', !!p.pad);
     gallery.classList.toggle('white', !!p.galleryWhite);
-    document.getElementById('panelHero').classList.toggle('framed', !!p.frame);   // the card's hairline frame, but only under the video/image
-    gallery.style.aspectRatio = p.panelRatio || '';                        // keep the picture's / video's own shape in the panel
-    const fit = !p.panelRatio && !p.video && !p.scroll && pics.length > 0;   // ordinary pictures: frame follows each picture's shape
+    document.getElementById('panelHero').classList.toggle('framed', !!p.frame);
+    gallery.style.aspectRatio = p.panelRatio || '';
+    const fit = !p.panelRatio && !p.video && !p.scroll && pics.length > 0;
     gallery.style.transition = 'none';
     gallery.classList.toggle('fit', fit);
     gallery.style.height = fit ? (gallery.clientWidth / 1.5) + 'px' : '';
     requestAnimationFrame(() => { gallery.style.transition = ''; });
-    if (p.video) {                                            // video: plays silently on a loop, no controls
+    if (p.video) {
       const slide = document.createElement('div'); slide.className = 'gslide';
       slide.innerHTML = '<video class="vid" muted loop autoplay playsinline preload="auto" disablepictureinpicture></video>';
       const v = slide.querySelector('video'); v.poster = p.poster || '';
       gallery.appendChild(slide);
       attachVideo(v, p.video);
       if (!reduce) { const pr = v.play(); if (pr && pr.catch) pr.catch(() => {}); }
-    } else if (!pics.length) {                                // no picture yet: a grey block, like the card
+    } else if (!pics.length) {
       const slide = document.createElement('div'); slide.className = 'gslide empty';
       gallery.appendChild(slide);
-    } else if (p.scroll) {                                    // tall picture: same slow upward scroll as the card
+    } else if (p.scroll) {
       const slide = document.createElement('div'); slide.className = 'gslide';
       slide.innerHTML = '<div class="scrollwin"><div class="vtrack"><img alt=""><img alt=""></div></div>';
       slide.querySelectorAll('img').forEach(im => { im.src = pics[0]; });
@@ -1603,7 +1339,7 @@
       });
     }
     if (p.eq) { const bars = document.createElement('div'); bars.className = 'eq-bars'; bars.innerHTML = '<i></i><i></i><i></i><i></i>'; gallery.appendChild(bars); }
-    gallery.scrollLeft = 0;                                   // always start on the first picture
+    gallery.scrollLeft = 0;
     updateGallery();
     const links = document.getElementById('modalLinks');
     links.textContent = '';
@@ -1621,35 +1357,12 @@
     const text = document.getElementById('modalText');
     text.textContent = '';
     m.paras.forEach(t => { const el = document.createElement('p'); if (m.html) el.innerHTML = t; else el.textContent = t; text.appendChild(el); });
-    showPanel(panel);
     panel.scrollTop = 0;
     modalOpener = opener;
     modalOpen = true;
     modal.classList.add('open');
     modal.setAttribute('aria-hidden', 'false');
     setTimeout(() => modalClose.focus({ preventScroll: true }), 60);
-  }
-  const skillsPanel = document.getElementById('skillsPanel');
-  const skillsClose = document.getElementById('skillsClose');
-  let activePanel = panel;
-  function showPanel(which) { activePanel = which; panel.hidden = which !== panel; skillsPanel.hidden = which !== skillsPanel; }
-
-  // "My Skills": a text-only panel, one centred column
-  // Every skill pill used across the panels, in the order first seen, with no repeats
-  const SKILLS = [...new Set(
-    Object.values(MORE).flatMap(m => m.tags || []).concat(MISSPAP_MORE.tags || [])
-  )];
-  const skillsList = document.getElementById('skillsList');
-  SKILLS.forEach(t => { const li = document.createElement('li'); li.className = 'tag'; li.textContent = t; skillsList.appendChild(li); });
-  function openSkills(opener) {
-    cancelDwell(); cancelPending();
-    showPanel(skillsPanel);
-    skillsPanel.scrollTop = 0;
-    modalOpener = opener;
-    modalOpen = true;
-    modal.classList.add('open');
-    modal.setAttribute('aria-hidden', 'false');
-    setTimeout(() => skillsClose.focus({ preventScroll: true }), 60);
   }
 
   function closeModal() {
@@ -1659,13 +1372,11 @@
     modal.setAttribute('aria-hidden', 'true');
     if (modalOpener) modalOpener.focus({ preventScroll: true });
   }
-  // Gallery: swipe (touch), arrow buttons, or the left / right arrow keys
   const gallery = document.getElementById('gallery');
   const gPrev = document.getElementById('gPrev');
   const gNext = document.getElementById('gNext');
   const gNav = document.getElementById('gNav');
   const galleryIndex = () => Math.round(gallery.scrollLeft / Math.max(1, gallery.clientWidth));
-  // Make the picture frame the same shape as the picture showing, so there is never black space around it
   function fitFrame() {
     if (!gallery.classList.contains('fit')) return;
     const sl = gallery.children[galleryIndex()];
@@ -1675,8 +1386,8 @@
   function updateGallery() {
     fitFrame();
     const n = gallery.children.length, i = galleryIndex();
-    gNav.hidden = n < 2;                                   // only one picture: no toggle at all
-    gPrev.disabled = i <= 0;                               // grey when you can't go that way
+    gNav.hidden = n < 2;
+    gPrev.disabled = i <= 0;
     gNext.disabled = i >= n - 1;
   }
   function galleryStep(d) {
@@ -1689,30 +1400,26 @@
   gPrev.addEventListener('click', () => galleryStep(-1));
   gNext.addEventListener('click', () => galleryStep(1));
 
-  // Keep Tab inside the panel while it's open
   function trapTab(e) {
-    const f = [...activePanel.querySelectorAll('button:not([hidden]):not(:disabled), a[href]')];
+    const f = [...panel.querySelectorAll('button:not([hidden]):not(:disabled), a[href]')];
     if (!f.length) return;
     const first = f[0], last = f[f.length - 1];
-    if (e.shiftKey && (document.activeElement === first || !activePanel.contains(document.activeElement))) { e.preventDefault(); last.focus(); }
+    if (e.shiftKey && (document.activeElement === first || !panel.contains(document.activeElement))) { e.preventDefault(); last.focus(); }
     else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
   }
 
   modalClose.addEventListener('click', closeModal);
-  skillsClose.addEventListener('click', closeModal);
   document.getElementById('modalBg').addEventListener('click', closeModal);
 
-  // ---------- Keyboard ----------
   window.addEventListener('keydown', e => {
-    if (modalOpen) {                                        // panel open: Esc closes it, nothing else moves
+    if (modalOpen) {
       if (e.key === 'Escape') closeModal();
-      else if (e.key === 'ArrowRight' && activePanel === panel) { e.preventDefault(); galleryStep(1); }
-      else if (e.key === 'ArrowLeft' && activePanel === panel) { e.preventDefault(); galleryStep(-1); }
+      else if (e.key === 'ArrowRight') { e.preventDefault(); galleryStep(1); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); galleryStep(-1); }
       else if (e.key === 'Tab') trapTab(e);
       return;
     }
     if (e.ctrlKey || e.metaKey || e.altKey) return;
-    // Let Space / Enter activate a focused card button instead of scrolling
     if ((e.key === ' ' || e.key === 'Enter') && e.target.closest && e.target.closest('button')) return;
     const step = Math.min(innerWidth * 0.6, 480);
     switch (e.key) {
@@ -1729,9 +1436,8 @@
     e.preventDefault();
   });
 
-  // Cards with several images cycle every two seconds, flipped or not (front and back move together)
-  const shows = projects.map((p, i) => (p.imgs && p.imgs.length > 1 && !p.scrollX) ? { p, i } : null).filter(Boolean);
-  if (!reduce) shows.forEach(({ p, i }) => {                       // each card can set its own pace with `every`
+  const shows = projects.map((p, i) => (p.imgs && p.imgs.length > 1) ? { p, i } : null).filter(Boolean);
+  if (!reduce) shows.forEach(({ p, i }) => {
     setInterval(() => {
       const sets = [...nodes[i].querySelectorAll('.face')].map(f => f.querySelectorAll('.slide')).filter(x => x.length);
       if (!sets.length) return;
@@ -1745,7 +1451,6 @@
     }, p.every || 2000);
   });
 
-  // Videos on the cards: muted, looping; paused while off-screen (and always still if the person prefers less motion)
   const cardVideos = [...document.querySelectorAll('.item .vid')];
   const onScreen = new Set();
   cardVideos.forEach(v => {
@@ -1760,7 +1465,6 @@
     }), { root: scroller, threshold: 0.05 });
     cardVideos.forEach(v => io.observe(v));
   }
-  // A video that should be playing but isn't moving after ~5 seconds is swapped for the animated picture
   setInterval(() => {
     if (reduce || document.hidden) return;
     document.querySelectorAll('video.vid').forEach(v => {
@@ -1769,10 +1473,9 @@
       const moving = !v.paused && v.readyState >= 2 && v.currentTime !== v._last;
       v._last = v.currentTime;
       v._still = moving ? 0 : (v._still || 0) + 1;
-      if (v._still >= 5) useAnimatedImage(v);
+      if (v._still >= 5) useStill(v);
     });
   }, 1000);
-  // Some browsers hold autoplay back until the person does something: nudge visible videos on the first touch, click, key or scroll
   const nudgeVideos = () => {
     if (reduce) return;
     document.querySelectorAll('video.vid').forEach(v => {
@@ -1781,8 +1484,6 @@
   };
   ['pointerdown', 'keydown', 'touchstart', 'wheel'].forEach(ev => window.addEventListener(ev, nudgeVideos, { passive: true }));
 
-
-  // ---------- Final photo: keyboard access for the grow / shrink click ----------
   nodes.forEach((li, i) => {
     if (!projects[i].end) return;
     const sh = li.querySelector('.shot');
@@ -1792,7 +1493,6 @@
     });
   });
 
-  // ---------- TV static on the old monitor in the start photo ----------
   (function () {
     const cvs = [...document.querySelectorAll('canvas.crt-noise')];
     if (!cvs.length || reduce) return;
@@ -1800,28 +1500,27 @@
     let lastT = 0;
     function snow(t) {
       requestAnimationFrame(snow);
-      if (t - lastT < 70 || document.hidden || scroller.scrollLeft > 900) return;   // ~14 frames a second, and only while the start photo is near
+      if (t - lastT < 70 || document.hidden || scroller.scrollLeft > 900) return;
       lastT = t;
       cvs.forEach(cv => {
         const w = cv.width, h = cv.height, d = cv._img.data;
         for (let i = 0; i < d.length; i += 4) { const v = (Math.random() * 255) | 0; d[i] = d[i + 1] = d[i + 2] = v; d[i + 3] = 255; }
-        const r = (Math.random() * (h - 8)) | 0;                                     // a bright tearing line that jumps about
+        const r = (Math.random() * (h - 8)) | 0;
         if (Math.random() < .5) for (let y = r; y < r + 3; y++) for (let x = 0; x < w; x++) { const k = (y * w + x) * 4; d[k] = d[k + 1] = d[k + 2] = 200 + ((Math.random() * 55) | 0); }
         cv._ctx.putImageData(cv._img, 0, 0);
-        cv.style.opacity = (0.5 + Math.random() * 0.2).toFixed(2);                   // and a flicker
+        cv.style.opacity = (0.5 + Math.random() * 0.2).toFixed(2);
       });
     }
     requestAnimationFrame(snow);
   })();
 
-  // ---------- Words that fade through under "Currently: Available" ----------
   (function () {
     const WORDS = ['Product Designer', 'Full Time Employment', 'Freelance Contracts', 'Remote / Hybrid / Studio', 'Digital Design', 'Photography', 'Videography', 'Direct Response Copywriting', 'Email Marketing', 'Conversion Rate Optimisation', 'Consultation', 'UI/UX Design', 'Brand Management'];
     const a = document.getElementById('rotA'), b = document.getElementById('rotB');
     document.getElementById('rotAll').textContent = 'Available for: ' + WORDS.join(', ');
     let i = 0, cur = a;
     a.textContent = WORDS[0];
-    setInterval(() => {                                       // a plain swap, no fade
+    setInterval(() => {
       if (document.hidden) return;
       i = (i + 1) % WORDS.length;
       a.textContent = WORDS[i];
@@ -1830,12 +1529,12 @@
 
   document.getElementById('home').addEventListener('click', () => location.reload());
 
-  document.getElementById('hintBtn').addEventListener('click', () => {           // jump to the first block
+  document.getElementById('hintBtn').addEventListener('click', () => {
     const first = projects.findIndex(p => !p.start && !p.end);
     cancelPending(); cancelDwell(); flipDown();
     centring = false; target = clamp(projects[first].x); run(0.14);
   });
-  document.getElementById('backStart').addEventListener('click', () => {        // glide back to the start
+  document.getElementById('backStart').addEventListener('click', () => {
     cancelPending(); cancelDwell(); flipDown();
     centring = false; target = 0; run(0.1);
   });
